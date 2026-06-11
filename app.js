@@ -9,13 +9,27 @@ document.addEventListener('DOMContentLoaded', () => {
   // Theme management
   let currentTheme = localStorage.getItem('wc2026_theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
 
+  const sunIcon = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
+      <circle cx="12" cy="12" r="4"/>
+      <path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/>
+      <path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+    </svg>
+  `;
+
+  const moonIcon = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
+      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+    </svg>
+  `;
+
   function applyTheme(theme) {
     if (theme === 'light') {
       document.body.classList.add('light-theme');
-      themeIcon.innerText = '🌙';
+      themeIcon.innerHTML = moonIcon;
     } else {
       document.body.classList.remove('light-theme');
-      themeIcon.innerText = '☀️';
+      themeIcon.innerHTML = sunIcon;
     }
     localStorage.setItem('wc2026_theme', theme);
   }
