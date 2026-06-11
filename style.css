@@ -106,6 +106,14 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
+  transition: padding 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.main-header.scrolled {
+  padding: 0.75rem 2rem;
+  background: rgba(15, 23, 42, 0.9);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .header-content h1 {
@@ -114,11 +122,26 @@ body {
   background: linear-gradient(to right, #60a5fa, #c084fc);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  transition: font-size 0.3s ease;
+}
+
+.main-header.scrolled .header-content h1 {
+  font-size: 1.25rem;
 }
 
 .header-content p {
   font-size: 0.875rem;
   color: var(--text-secondary);
+  transition: opacity 0.3s ease, max-height 0.3s ease, margin 0.3s ease;
+  max-height: 20px;
+  opacity: 1;
+}
+
+.main-header.scrolled .header-content p {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0;
 }
 
 /* Buttons */
