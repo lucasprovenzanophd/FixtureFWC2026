@@ -5,12 +5,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // State management
   let state = JSON.parse(localStorage.getItem('wc2026_state')) || {
-    matches: {}, // key: "group_A_m0", value: { home: 1, away: 0 }
-    knockout: {} // key: "r32_m0", value: { home: 2, away: 1 }
+    matches: {}, // key: "group_A_m0", value: { home: '', away: '' }
+    knockout: {} // key: "r32_m0", value: { home: '', away: '' }
   };
+
+  let activeInputInfo = null;
 
   function saveState() {
     localStorage.setItem('wc2026_state', JSON.stringify(state));
+  }
+
+  function saveActiveInput() {
+    if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+      activeInputInfo = {
+        key: document.activeElement.dataset.key,
+        side: document.activeElement.dataset.side,
+        selectionStart: document.activeElement.selectionStart,
+        selectionEnd: document.activeElement.selectionEnd
+      };
+    } else {
+      activeInputInfo = null;
+    }
+  }
+
+  function restoreActiveInput() {
+    if (activeInputInfo) {
+      const input = document.querySelector(`input[data-key="${activeInputInfo.key}"][data-side="${activeInputInfo.side}"]`);
+      if (input) {
+        input.focus();
+        try {
+          input.setSelectionRange(activeInputInfo.selectionStart, activeInputInfo.selectionEnd);
+        } catch (e) {}
+      }
+    }
   }
 
   resetBtn.addEventListener('click', () => {
@@ -31,6 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  function getTeamFlagHTML(teamName) {
+    const code = worldCupData.teamFlags[teamName];
+    if (code) {
+      return `<img src="https://flagcdn.com/16x12/${code}.png" class="flag-icon" alt="${teamName}">`;
+    }
+    return `<span class="flag-placeholder">🏳️</span>`;
+  }
+
   function calculateStandings(groupLetter) {
     const teams = worldCupData.groups[groupLetter];
     let standings = teams.map(team => ({
@@ -40,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     worldCupData.groupMatches.forEach((match, index) => {
       const matchKey = `group_${groupLetter}_m${index}`;
       const score = state.matches[matchKey];
-      if (score && score.home !== '' && score.away !== '') {
+      if (score && score.home !== '' && score.away !== '' && score.home !== undefined && score.away !== undefined) {
         const homeIdx = match[0];
         const awayIdx = match[1];
         const homeGoals = parseInt(score.home);
@@ -82,40 +117,53 @@ document.addEventListener('DOMContentLoaded', () => {
     return standings;
   }
 
-  function renderGroupStage() {
+  function updateGroupStandings(groupLetter) {
+    const standings = calculateStandings(groupLetter);
+    const tbody = document.querySelector(`.standings-container[data-group="${groupLetter}"] tbody`);
+    if (!tbody) return;
+
+    let html = '';
+    standings.forEach((s, idx) => {
+      let rowClass = '';
+      if (idx < 2) rowClass = 'advances';
+      else if (idx === 2) rowClass = 'maybe-advances';
+      
+      html += `
+        <tr class="${rowClass}">
+          <td class="team-name" style="display: flex; align-items: center; gap: 0.5rem;">
+            ${getTeamFlagHTML(s.name)} <span>${s.name}</span>
+          </td>
+          <td>${s.pld}</td><td>${s.w}</td><td>${s.d}</td><td>${s.l}</td><td>${s.gd}</td><td>${s.pts}</td>
+        </tr>
+      `;
+    });
+    tbody.innerHTML = html;
+  }
+
+  function initGroupStage() {
     groupsContainer.innerHTML = '';
     
     Object.keys(worldCupData.groups).forEach(groupLetter => {
-      const standings = calculateStandings(groupLetter);
       const teams = worldCupData.groups[groupLetter];
       
       const groupCard = document.createElement('div');
       groupCard.className = 'glass-panel group-card';
       
-      // Standings HTML
+      // Standings HTML container
       let standingsHTML = `
-        <table class="standings-table">
-          <thead>
-            <tr>
-              <th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
-            </tr>
-          </thead>
-          <tbody>
+        <div class="standings-container" data-group="${groupLetter}">
+          <table class="standings-table">
+            <thead>
+              <tr>
+                <th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Injected via updateGroupStandings -->
+            </tbody>
+          </table>
+        </div>
       `;
-      
-      standings.forEach((s, idx) => {
-        let rowClass = '';
-        if (idx < 2) rowClass = 'advances';
-        else if (idx === 2) rowClass = 'maybe-advances';
-        
-        standingsHTML += `
-          <tr class="${rowClass}">
-            <td class="team-name">${s.name}</td>
-            <td>${s.pld}</td><td>${s.w}</td><td>${s.d}</td><td>${s.l}</td><td>${s.gd}</td><td>${s.pts}</td>
-          </tr>
-        `;
-      });
-      standingsHTML += `</tbody></table>`;
 
       // Matches HTML
       let matchesHTML = `<div class="matches-list">`;
@@ -127,13 +175,20 @@ document.addEventListener('DOMContentLoaded', () => {
         
         matchesHTML += `
           <div class="match-row">
-            <span class="team">${homeTeam}</span>
+            <span class="team team-left">
+              <span>${homeTeam}</span>
+              ${getTeamFlagHTML(homeTeam)}
+            </span>
             <div class="score-inputs">
-              <input type="number" min="0" class="score-input" data-key="${matchKey}" data-side="home" value="${score.home}">
+              <input type="number" min="0" class="score-input group-input" data-key="${matchKey}" data-side="home" value="${score.home}">
               <span>-</span>
-              <input type="number" min="0" class="score-input" data-key="${matchKey}" data-side="away" value="${score.away}">
+              <input type="number" min="0" class="score-input group-input" data-key="${matchKey}" data-side="away" value="${score.away}">
+              <button class="btn-clear" data-key="${matchKey}" title="Clear score">&times;</button>
             </div>
-            <span class="team">${awayTeam}</span>
+            <span class="team team-right">
+              ${getTeamFlagHTML(awayTeam)}
+              <span>${awayTeam}</span>
+            </span>
           </div>
         `;
       });
@@ -147,21 +202,53 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `;
       groupsContainer.appendChild(groupCard);
-    });
-
-    // Add event listeners to newly created inputs
-    document.querySelectorAll('.groups-grid .score-input').forEach(input => {
-      input.addEventListener('change', (e) => {
-        const key = e.target.dataset.key;
-        const side = e.target.dataset.side;
-        if (!state.matches[key]) state.matches[key] = { home: '', away: '' };
-        state.matches[key][side] = e.target.value;
-        saveState();
-        renderGroupStage();
-        renderKnockoutStage();
-      });
+      
+      // Initial calculation for the group
+      updateGroupStandings(groupLetter);
     });
   }
+
+  // Group Stage Event Listeners (using delegation to avoid rewriting listeners)
+  groupsContainer.addEventListener('input', (e) => {
+    if (e.target.classList.contains('score-input')) {
+      const key = e.target.dataset.key;
+      const side = e.target.dataset.side;
+      const groupLetter = key.split('_')[1];
+      
+      if (!state.matches[key]) state.matches[key] = { home: '', away: '' };
+      state.matches[key][side] = e.target.value;
+      saveState();
+      
+      // Update standings for this group only
+      updateGroupStandings(groupLetter);
+      
+      // Propagate changes to knockout stage
+      saveActiveInput();
+      renderKnockoutStage();
+      restoreActiveInput();
+    }
+  });
+
+  groupsContainer.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn-clear')) {
+      const key = e.target.dataset.key;
+      state.matches[key] = { home: '', away: '' };
+      saveState();
+      
+      // Clear inputs in DOM
+      const homeInput = groupsContainer.querySelector(`input[data-key="${key}"][data-side="home"]`);
+      const awayInput = groupsContainer.querySelector(`input[data-key="${key}"][data-side="away"]`);
+      if (homeInput) homeInput.value = '';
+      if (awayInput) awayInput.value = '';
+      
+      const groupLetter = key.split('_')[1];
+      updateGroupStandings(groupLetter);
+      
+      saveActiveInput();
+      renderKnockoutStage();
+      restoreActiveInput();
+    }
+  });
 
   function getAdvancingTeams() {
     let top2 = [];
@@ -183,11 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const advancingThirds = thirds.slice(0, 8);
     const allAdvancing = [...top2, ...advancingThirds];
-    
-    // Fallback if not all matches are played yet
-    if (allAdvancing.length < 32 || allAdvancing.some(t => t.pld === 0)) {
-       // Return placeholders or current state
-    }
     
     return allAdvancing.map(t => t.name);
   }
@@ -223,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let homeWinner = false;
         let awayWinner = false;
-        if (score.home !== '' && score.away !== '') {
+        if (score.home !== '' && score.away !== '' && score.home !== undefined && score.away !== undefined) {
           if (parseInt(score.home) > parseInt(score.away)) {
             homeWinner = true;
             currentRoundWinners.push(homeTeam);
@@ -231,7 +313,6 @@ document.addEventListener('DOMContentLoaded', () => {
             awayWinner = true;
             currentRoundWinners.push(awayTeam);
           } else {
-            // Tie - just push a placeholder until a winner is determined (e.g. penalties)
             currentRoundWinners.push('Winner ' + matchKey);
           }
         } else {
@@ -242,13 +323,20 @@ document.addEventListener('DOMContentLoaded', () => {
         matchDiv.className = 'bracket-match';
         matchDiv.innerHTML = `
           <div class="bracket-team ${homeWinner ? 'winner' : ''}">
-            <span class="team">${homeTeam}</span>
+            <span class="team" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start;">
+              ${getTeamFlagHTML(homeTeam)}
+              <span>${homeTeam}</span>
+            </span>
             <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="home" value="${score.home}">
           </div>
           <div class="bracket-team ${awayWinner ? 'winner' : ''}">
-            <span class="team">${awayTeam}</span>
+            <span class="team" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start;">
+              ${getTeamFlagHTML(awayTeam)}
+              <span>${awayTeam}</span>
+            </span>
             <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="away" value="${score.away}">
           </div>
+          <button class="btn-clear btn-clear-ko" data-key="${matchKey}" title="Clear score">&times;</button>
         `;
         roundDiv.appendChild(matchDiv);
       }
@@ -256,21 +344,38 @@ document.addEventListener('DOMContentLoaded', () => {
       previousRoundWinners = currentRoundWinners;
       bracketContainer.appendChild(roundDiv);
     });
-
-    document.querySelectorAll('.knockout-bracket .score-input').forEach(input => {
-      input.addEventListener('change', (e) => {
-        const key = e.target.dataset.key;
-        const side = e.target.dataset.side;
-        if (!state.knockout[key]) state.knockout[key] = { home: '', away: '' };
-        state.knockout[key][side] = e.target.value;
-        saveState();
-        renderKnockoutStage();
-      });
-    });
   }
 
+  // Knockout stage delegation event listeners
+  bracketContainer.addEventListener('input', (e) => {
+    if (e.target.classList.contains('score-input')) {
+      const key = e.target.dataset.key;
+      const side = e.target.dataset.side;
+      
+      if (!state.knockout[key]) state.knockout[key] = { home: '', away: '' };
+      state.knockout[key][side] = e.target.value;
+      saveState();
+      
+      saveActiveInput();
+      renderKnockoutStage();
+      restoreActiveInput();
+    }
+  });
+
+  bracketContainer.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn-clear')) {
+      const key = e.target.dataset.key;
+      state.knockout[key] = { home: '', away: '' };
+      saveState();
+      
+      saveActiveInput();
+      renderKnockoutStage();
+      restoreActiveInput();
+    }
+  });
+
   function renderAll() {
-    renderGroupStage();
+    initGroupStage();
     renderKnockoutStage();
   }
 
