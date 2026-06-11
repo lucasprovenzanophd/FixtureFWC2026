@@ -3,6 +3,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const bracketContainer = document.getElementById('bracket-container');
   const knockoutTabs = document.getElementById('knockout-tabs');
   const resetBtn = document.getElementById('resetBtn');
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+  const themeIcon = themeToggleBtn.querySelector('.theme-icon');
+
+  // Theme management
+  let currentTheme = localStorage.getItem('wc2026_theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      document.body.classList.add('light-theme');
+      themeIcon.innerText = '🌙';
+    } else {
+      document.body.classList.remove('light-theme');
+      themeIcon.innerText = '☀️';
+    }
+    localStorage.setItem('wc2026_theme', theme);
+  }
+
+  themeToggleBtn.addEventListener('click', () => {
+    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(currentTheme);
+  });
+
+  applyTheme(currentTheme);
 
   // State management
   let state = JSON.parse(localStorage.getItem('wc2026_state')) || {
