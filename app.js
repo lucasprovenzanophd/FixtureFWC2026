@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'Estadio Azteca, Mexico City', 'MetLife Stadium, New Jersey', 'AT&T Stadium, Arlington',
       'Arrowhead Stadium, Kansas City', 'NRG Stadium, Houston', 'Mercedes-Benz Stadium, Atlanta',
       'SoFi Stadium, Los Angeles', 'Lincoln Financial Field, Philadelphia', 'Lumen Field, Seattle',
-      'Levi\\'s Stadium, Santa Clara', 'Gillette Stadium, Foxborough', 'Hard Rock Stadium, Miami',
+      "Levi's Stadium, Santa Clara", 'Gillette Stadium, Foxborough', 'Hard Rock Stadium, Miami',
       'BC Place, Vancouver', 'BMO Field, Toronto', 'Estadio Akron, Guadalajara', 'Estadio BBVA, Monterrey'
     ];
     const startDate = new Date('2026-06-11T16:00:00Z');
