@@ -91,6 +91,37 @@ document.addEventListener('DOMContentLoaded', () => {
     return `<span class="flag-placeholder">🏳️</span>`;
   }
 
+  function formatMatchDetails(stageType, index) {
+    const stadiums = [
+      'Estadio Azteca, Mexico City', 'MetLife Stadium, New Jersey', 'AT&T Stadium, Arlington',
+      'Arrowhead Stadium, Kansas City', 'NRG Stadium, Houston', 'Mercedes-Benz Stadium, Atlanta',
+      'SoFi Stadium, Los Angeles', 'Lincoln Financial Field, Philadelphia', 'Lumen Field, Seattle',
+      'Levi\\'s Stadium, Santa Clara', 'Gillette Stadium, Foxborough', 'Hard Rock Stadium, Miami',
+      'BC Place, Vancouver', 'BMO Field, Toronto', 'Estadio Akron, Guadalajara', 'Estadio BBVA, Monterrey'
+    ];
+    const startDate = new Date('2026-06-11T16:00:00Z');
+    let matchDate = new Date(startDate.getTime());
+    if (stageType === 'group') {
+      matchDate.setHours(matchDate.getHours() + index * 4);
+    } else {
+      matchDate.setDate(matchDate.getDate() + 15 + index);
+    }
+    const stadium = stadiums[index % stadiums.length];
+    
+    const formattedDate = matchDate.toLocaleString(undefined, {
+      weekday: 'short', month: 'short', day: 'numeric',
+      hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
+    });
+    return `<div class="match-details">${formattedDate} &bull; ${stadium}</div>`;
+  }
+
+  const restartIconSVG = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
+      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+      <path d="M3 3v5h5"/>
+    </svg>
+  `;
+
   function calculateStandings(groupLetter) {
     const teams = worldCupData.groups[groupLetter];
     let standings = teams.map(team => ({
@@ -200,20 +231,25 @@ document.addEventListener('DOMContentLoaded', () => {
         
         matchesHTML += `
           <div class="match-row">
-            <span class="team team-left">
-              <span>${homeTeam}</span>
-              ${getTeamFlagHTML(homeTeam)}
-            </span>
-            <div class="score-inputs">
-              <input type="number" min="0" class="score-input group-input" data-key="${matchKey}" data-side="home" value="${score.home}">
-              <span>-</span>
-              <input type="number" min="0" class="score-input group-input" data-key="${matchKey}" data-side="away" value="${score.away}">
+            ${formatMatchDetails('group', index)}
+            <div class="match-content">
+              <span class="team team-left">
+                <span>${homeTeam}</span>
+                ${getTeamFlagHTML(homeTeam)}
+              </span>
+              <div class="score-inputs">
+                <input type="number" min="0" class="score-input group-input" data-key="${matchKey}" data-side="home" value="${score.home}">
+                <span>-</span>
+                <input type="number" min="0" class="score-input group-input" data-key="${matchKey}" data-side="away" value="${score.away}">
+              </div>
+              <span class="team team-right">
+                ${getTeamFlagHTML(awayTeam)}
+                <span>${awayTeam}</span>
+              </span>
             </div>
-            <span class="team team-right">
-              ${getTeamFlagHTML(awayTeam)}
-              <span>${awayTeam}</span>
-            </span>
-            <button class="btn-clear" data-key="${matchKey}" title="Clear score">&times;</button>
+            <button class="btn-clear" data-key="${matchKey}" title="Restart match">
+              ${restartIconSVG}
+            </button>
           </div>
         `;
       });
@@ -255,8 +291,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   groupsContainer.addEventListener('click', (e) => {
-    if (e.target.classList.contains('btn-clear')) {
-      const key = e.target.dataset.key;
+    const clearBtn = e.target.closest('.btn-clear');
+    if (clearBtn) {
+      const key = clearBtn.dataset.key;
       state.matches[key] = { home: '', away: '' };
       saveState();
       
@@ -365,6 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const matchDiv = document.createElement('div');
           matchDiv.className = 'bracket-match';
           matchDiv.innerHTML = `
+            ${formatMatchDetails('knockout', stageIdx * 10 + i)}
             <div class="bracket-team ${homeWinner ? 'winner' : ''}">
               <span class="team" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start; min-width: 0;">
                 ${getTeamFlagHTML(homeTeam)}
@@ -379,7 +417,9 @@ document.addEventListener('DOMContentLoaded', () => {
               </span>
               <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="away" value="${score.away}">
             </div>
-            <button class="btn-clear btn-clear-ko" data-key="${matchKey}" title="Clear score">&times;</button>
+            <button class="btn-clear btn-clear-ko" data-key="${matchKey}" title="Restart match">
+              ${restartIconSVG}
+            </button>
           `;
           roundDiv.appendChild(matchDiv);
         }
@@ -409,8 +449,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   bracketContainer.addEventListener('click', (e) => {
-    if (e.target.classList.contains('btn-clear')) {
-      const key = e.target.dataset.key;
+    const clearBtn = e.target.closest('.btn-clear');
+    if (clearBtn) {
+      const key = clearBtn.dataset.key;
       state.knockout[key] = { home: '', away: '' };
       saveState();
       
