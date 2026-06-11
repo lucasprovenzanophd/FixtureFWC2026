@@ -19,9 +19,6 @@
       <h1>FIFA World Cup 2026™</h1>
       <p>Interactive Fixture & Standings</p>
     </div>
-    <div class="header-actions">
-      <button id="resetBtn" class="btn btn-outline">Reset Data</button>
-    </div>
   </header>
 
   <main class="container">
@@ -37,6 +34,9 @@
     </section>
 
     <section id="knockout-stage" class="stage-section">
+      <nav class="sub-tabs glass-panel" id="knockout-tabs">
+        <!-- Sub-tabs for Round of 32, 16, etc. will be injected via JS -->
+      </nav>
       <div class="knockout-bracket" id="bracket-container">
         <!-- Knockout bracket will be injected here via JS -->
       </div>
@@ -45,6 +45,7 @@
 
   <footer class="glass-panel main-footer">
     <p>World Cup 2026 Fixture Tracker - Mobile Responsive & Local Storage Ready</p>
+    <button id="resetBtn" class="btn btn-danger btn-reset-bottom">Reset All Data</button>
   </footer>
 
   <script src="data.js"></script>

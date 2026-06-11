@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const groupsContainer = document.getElementById('groups-container');
   const bracketContainer = document.getElementById('bracket-container');
+  const knockoutTabs = document.getElementById('knockout-tabs');
   const resetBtn = document.getElementById('resetBtn');
 
   // State management
@@ -10,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   let activeInputInfo = null;
+  let activeKnockoutStage = 'r32';
 
   function saveState() {
     localStorage.setItem('wc2026_state', JSON.stringify(state));
@@ -41,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   resetBtn.addEventListener('click', () => {
-    if(confirm('Are you sure you want to reset all data?')) {
+    if(confirm('⚠️ WARNING: This will permanently delete all entered match scores, standing data, and bracket progress. This action cannot be undone.\n\nAre you sure you want to continue?')) {
       state = { matches: {}, knockout: {} };
       saveState();
       renderAll();
@@ -275,18 +277,35 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderKnockoutStage() {
+    // Render Knockout Tabs
+    knockoutTabs.innerHTML = '';
+    worldCupData.knockoutStages.forEach(stage => {
+      const tabBtn = document.createElement('button');
+      tabBtn.className = `tab-btn sub-tab-btn ${activeKnockoutStage === stage.id ? 'active' : ''}`;
+      tabBtn.innerText = stage.name;
+      tabBtn.dataset.stage = stage.id;
+      tabBtn.addEventListener('click', (e) => {
+        activeKnockoutStage = e.target.dataset.stage;
+        renderKnockoutStage();
+      });
+      knockoutTabs.appendChild(tabBtn);
+    });
+
     bracketContainer.innerHTML = '';
     const advancingTeams = getAdvancingTeams();
     
     let previousRoundWinners = advancingTeams;
 
     worldCupData.knockoutStages.forEach((stage, stageIdx) => {
-      const roundDiv = document.createElement('div');
-      roundDiv.className = 'bracket-round';
-      
-      roundDiv.innerHTML = `<div class="round-header">${stage.name}</div>`;
-      
       let currentRoundWinners = [];
+      const isStageActive = stage.id === activeKnockoutStage;
+      
+      let roundDiv;
+      if (isStageActive) {
+        roundDiv = document.createElement('div');
+        roundDiv.className = 'bracket-round active-round';
+        roundDiv.innerHTML = `<div class="round-header">${stage.name}</div>`;
+      }
 
       for (let i = 0; i < stage.matches; i++) {
         const matchKey = `${stage.id}_m${i}`;
@@ -319,30 +338,34 @@ document.addEventListener('DOMContentLoaded', () => {
           currentRoundWinners.push('Winner ' + matchKey);
         }
 
-        const matchDiv = document.createElement('div');
-        matchDiv.className = 'bracket-match';
-        matchDiv.innerHTML = `
-          <div class="bracket-team ${homeWinner ? 'winner' : ''}">
-            <span class="team" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start;">
-              ${getTeamFlagHTML(homeTeam)}
-              <span>${homeTeam}</span>
-            </span>
-            <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="home" value="${score.home}">
-          </div>
-          <div class="bracket-team ${awayWinner ? 'winner' : ''}">
-            <span class="team" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start;">
-              ${getTeamFlagHTML(awayTeam)}
-              <span>${awayTeam}</span>
-            </span>
-            <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="away" value="${score.away}">
-          </div>
-          <button class="btn-clear btn-clear-ko" data-key="${matchKey}" title="Clear score">&times;</button>
-        `;
-        roundDiv.appendChild(matchDiv);
+        if (isStageActive) {
+          const matchDiv = document.createElement('div');
+          matchDiv.className = 'bracket-match';
+          matchDiv.innerHTML = `
+            <div class="bracket-team ${homeWinner ? 'winner' : ''}">
+              <span class="team" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start; min-width: 0;">
+                ${getTeamFlagHTML(homeTeam)}
+                <span class="team-name-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${homeTeam}</span>
+              </span>
+              <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="home" value="${score.home}">
+            </div>
+            <div class="bracket-team ${awayWinner ? 'winner' : ''}">
+              <span class="team" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start; min-width: 0;">
+                ${getTeamFlagHTML(awayTeam)}
+                <span class="team-name-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${awayTeam}</span>
+              </span>
+              <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="away" value="${score.away}">
+            </div>
+            <button class="btn-clear btn-clear-ko" data-key="${matchKey}" title="Clear score">&times;</button>
+          `;
+          roundDiv.appendChild(matchDiv);
+        }
       }
       
       previousRoundWinners = currentRoundWinners;
-      bracketContainer.appendChild(roundDiv);
+      if (isStageActive) {
+        bracketContainer.appendChild(roundDiv);
+      }
     });
   }
 
