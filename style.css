@@ -251,9 +251,9 @@ body {
 }
 
 .standings-table th, .standings-table td {
-  padding: 0.5rem 0.25rem;
+  padding: 0.6rem 0.5rem;
   text-align: center;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .standings-table th {
@@ -264,13 +264,21 @@ body {
 .standings-table td.team-name {
   text-align: left;
   font-weight: 600;
+  padding-left: 0.75rem;
 }
 
 .standings-table tr.advances {
-  color: var(--success);
+  background: rgba(16, 185, 129, 0.04);
 }
+.standings-table tr.advances td:first-child {
+  border-left: 3px solid var(--success);
+}
+
 .standings-table tr.maybe-advances {
-  color: #fbbf24; /* yellow for 3rd place possible advance */
+  background: rgba(251, 191, 36, 0.02);
+}
+.standings-table tr.maybe-advances td:first-child {
+  border-left: 3px solid #fbbf24;
 }
 
 /* Matches List */
@@ -281,17 +289,23 @@ body {
 }
 
 .match-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 90px 1fr 24px;
   align-items: center;
-  justify-content: space-between;
-  background: rgba(0,0,0,0.2);
-  padding: 0.5rem;
-  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
   font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.match-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .team {
-  flex: 1;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -336,19 +350,24 @@ body {
   background: transparent;
   border: none;
   color: var(--text-secondary);
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   line-height: 1;
   cursor: pointer;
   padding: 0;
-  margin-left: 8px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
+  justify-self: end;
+  opacity: 0.2;
+}
+
+.match-row:hover .btn-clear {
+  opacity: 1;
 }
 
 .btn-clear:hover {
@@ -357,7 +376,18 @@ body {
 }
 
 .btn-clear-ko {
-  margin: 8px auto 0 auto;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  margin: 0;
+  width: 18px;
+  height: 18px;
+  font-size: 1rem;
+  opacity: 0;
+}
+
+.bracket-match:hover .btn-clear-ko {
+  opacity: 1;
 }
 
 .score-inputs {
@@ -424,12 +454,13 @@ body {
   background: rgba(15, 23, 42, 0.4);
   border: 1px solid var(--glass-border);
   border-radius: 0.75rem;
-  padding: 0.75rem;
+  padding: 1.25rem 0.75rem 0.75rem 0.75rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   box-shadow: var(--glass-shadow);
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .bracket-match:hover {

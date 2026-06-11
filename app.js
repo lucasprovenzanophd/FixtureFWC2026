@@ -183,12 +183,12 @@ document.addEventListener('DOMContentLoaded', () => {
               <input type="number" min="0" class="score-input group-input" data-key="${matchKey}" data-side="home" value="${score.home}">
               <span>-</span>
               <input type="number" min="0" class="score-input group-input" data-key="${matchKey}" data-side="away" value="${score.away}">
-              <button class="btn-clear" data-key="${matchKey}" title="Clear score">&times;</button>
             </div>
             <span class="team team-right">
               ${getTeamFlagHTML(awayTeam)}
               <span>${awayTeam}</span>
             </span>
+            <button class="btn-clear" data-key="${matchKey}" title="Clear score">&times;</button>
           </div>
         `;
       });
