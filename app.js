@@ -41,6 +41,117 @@ document.addEventListener('DOMContentLoaded', () => {
 
   applyTheme(currentTheme);
 
+  // Language management
+  const translations = {
+    en: {
+      title: 'FIFA World Cup 2026™',
+      subtitle: 'Interactive Fixture & Standings',
+      tabGroup: 'Group Stage',
+      tabKnockout: 'Knockout Stage',
+      colTeam: 'Team',
+      colP: 'P',
+      colW: 'W',
+      colD: 'D',
+      colL: 'L',
+      colGD: 'GD',
+      colPts: 'Pts',
+      restartMatch: 'Restart match',
+      resetAll: 'Reset All Data',
+      resetConfirm: '⚠️ WARNING: This will permanently delete all entered match scores, standing data, and bracket progress. This action cannot be undone.\n\nAre you sure you want to continue?',
+      progressCompleteTitle: '🎉 Group Stage Completed! (72/72 Matches Played)',
+      progressCompleteDesc: 'All group stage matches have been played. The knockout stage bracket is fully calculated and unlocked!',
+      progressIncompleteTitle: '⚠️ Group Stage Incomplete',
+      progressIncompleteDesc: 'The knockout stage bracket will be filled once all group matches have been played. Please fill in all group stage scores first.',
+      r32: 'Round of 32',
+      r16: 'Round of 16',
+      qf: 'Quarter-finals',
+      sf: 'Semi-finals',
+      final: 'Final',
+      winner: 'Winner',
+      loser: 'Loser',
+      winnerShort: 'W',
+      loserShort: 'L',
+      groupTitle: 'Group',
+      thirdPlacePlayoff: '🥉 THIRD-PLACE PLAY-OFF',
+      grandFinal: '🏆 GRAND FINAL',
+      thirdPlaceShort: '3rd',
+      footer: 'World Cup 2026 Fixture Tracker - Mobile Responsive & Local Storage Ready'
+    },
+    es: {
+      title: 'Copa Mundial de la FIFA 2026™',
+      subtitle: 'Calendario Interactivo y Clasificaciones',
+      tabGroup: 'Fase de Grupos',
+      tabKnockout: 'Eliminatorias',
+      colTeam: 'Equipo',
+      colP: 'PJ',
+      colW: 'PG',
+      colD: 'PE',
+      colL: 'PP',
+      colGD: 'DG',
+      colPts: 'Pts',
+      restartMatch: 'Reiniciar partido',
+      resetAll: 'Restablecer Datos',
+      resetConfirm: '⚠️ ADVERTENCIA: Esto eliminará permanentemente todos los resultados de los partidos, clasificaciones y progreso de las eliminatorias. Esta acción no se puede deshacer.\n\n¿Estás seguro de que deseas continuar?',
+      progressCompleteTitle: '🎉 ¡Fase de Grupos Completada! (72/72 Partidos Jugados)',
+      progressCompleteDesc: 'Todos los partidos de la fase de grupos han sido jugados. ¡El cuadro de eliminatorias está completamente calculado y desbloqueado!',
+      progressIncompleteTitle: '⚠️ Fase de Grupos Incompleta',
+      progressIncompleteDesc: 'El cuadro de eliminatorias se llenará una vez que se hayan jugado todos los partidos de la fase de grupos. Por favor, completa primero todos los resultados de la fase de grupos.',
+      r32: 'Dieciseisavos de Final',
+      r16: 'Octavos de Final',
+      qf: 'Cuartos de Final',
+      sf: 'Semifinales',
+      final: 'Final',
+      winner: 'Ganador',
+      loser: 'Perdedor',
+      winnerShort: 'G',
+      loserShort: 'P',
+      groupTitle: 'Grupo',
+      thirdPlacePlayoff: '🥉 TERCER PUESTO',
+      grandFinal: '🏆 GRAN FINAL',
+      thirdPlaceShort: '3º',
+      footer: 'Seguidor de la Copa Mundial 2026 - Responsive y con Almacenamiento Local'
+    }
+  };
+
+  let currentLang = localStorage.getItem('wc2026_lang') || 'en';
+
+  function t(key) {
+    return translations[currentLang][key] || translations['en'][key] || key;
+  }
+
+  function applyLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('wc2026_lang', lang);
+    
+    // Update selector buttons active state
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      if (btn.dataset.lang === lang) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // Translate static DOM elements
+    document.getElementById('app-title').innerText = t('title');
+    document.getElementById('app-subtitle').innerText = t('subtitle');
+    document.getElementById('tab-group').innerText = t('tabGroup');
+    document.getElementById('tab-knockout').innerText = t('tabKnockout');
+    document.getElementById('footer-text').innerText = t('footer');
+    resetBtn.innerText = t('resetAll');
+  }
+
+  // Setup language button event listeners
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const selectedLang = e.target.dataset.lang;
+      applyLanguage(selectedLang);
+      renderAll();
+    });
+  });
+
+  applyLanguage(currentLang);
+
   // State management
   let state = JSON.parse(localStorage.getItem('wc2026_state')) || {
     matches: {}, // key: "group_A_m0", value: { home: '', away: '' }
@@ -91,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   resetBtn.addEventListener('click', () => {
-    if(confirm('⚠️ WARNING: This will permanently delete all entered match scores, standing data, and bracket progress. This action cannot be undone.\n\nAre you sure you want to continue?')) {
+    if(confirm(t('resetConfirm'))) {
       state = { matches: {}, knockout: {} };
       saveState();
       renderAll();
@@ -127,9 +238,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (teamShortNames[teamName]) {
       return teamShortNames[teamName];
     }
-    // Handle "Winner XXX MX" placeholders
+    const winnerPrefix = t('winner') + ' ';
+    const loserPrefix = t('loser') + ' ';
+    if (teamName.startsWith(winnerPrefix)) {
+      return teamName.replace(winnerPrefix, t('winnerShort') + ' ');
+    }
+    if (teamName.startsWith(loserPrefix)) {
+      return teamName.replace(loserPrefix, t('loserShort') + ' ');
+    }
+    // Fallback checks for English defaults to be resilient
     if (teamName.startsWith('Winner ')) {
-      return teamName.replace('Winner ', 'W ');
+      return teamName.replace('Winner ', t('winnerShort') + ' ');
+    }
+    if (teamName.startsWith('Loser ')) {
+      return teamName.replace('Loser ', t('loserShort') + ' ');
     }
     return teamName;
   }
@@ -144,9 +266,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const stageName = stageNames[stageId] || stageId.toUpperCase();
     if (stageId === 'final') {
-      return `Winner Final`;
+      return `${t('winner')} Final`;
     }
-    return `Winner ${stageName} M${matchIndex + 1}`;
+    return `${t('winner')} ${stageName} M${matchIndex + 1}`;
   }
 
   function formatLoserPlaceholder(stageId, matchIndex) {
@@ -158,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
       final: 'Final'
     };
     const stageName = stageNames[stageId] || stageId.toUpperCase();
-    return `Loser ${stageName} M${matchIndex + 1}`;
+    return `${t('loser')} ${stageName} M${matchIndex + 1}`;
   }
 
 
@@ -243,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const stadium = stadiums[index % stadiums.length];
     
-    const formattedDate = matchDate.toLocaleString(undefined, {
+    const formattedDate = matchDate.toLocaleString(currentLang, {
       weekday: 'short', month: 'short', day: 'numeric',
       hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
     });
@@ -346,7 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <table class="standings-table">
             <thead>
               <tr>
-                <th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
+                <th>${t('colTeam')}</th><th>${t('colP')}</th><th>${t('colW')}</th><th>${t('colD')}</th><th>${t('colL')}</th><th>${t('colGD')}</th><th>${t('colPts')}</th>
               </tr>
             </thead>
             <tbody>
@@ -382,7 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="team-name-text"><span class="full-name">${awayTeam}</span><span class="short-name">${getTeamShortName(awayTeam)}</span></span>
               </span>
             </div>
-            <button class="btn-clear" data-key="${matchKey}" title="Restart match">
+            <button class="btn-clear" data-key="${matchKey}" title="${t('restartMatch')}">
               ${restartIconSVG}
             </button>
           </div>
@@ -391,7 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
       matchesHTML += `</div>`;
 
       groupCard.innerHTML = `
-        <div class="group-header">Group ${groupLetter}</div>
+        <div class="group-header">${t('groupTitle')} ${groupLetter}</div>
         <div class="group-content">
           ${standingsHTML}
           ${matchesHTML}
@@ -474,21 +596,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!areAllGroupMatchesPlayed()) {
       return [
         '2A', '2B',
-        '1E', '3rd A/B/C/D/F',
+        '1E', `${t('thirdPlaceShort')} A/B/C/D/F`,
         '1F', '2C',
         '1C', '2F',
-        '1I', '3rd C/D/F/G/H',
+        '1I', `${t('thirdPlaceShort')} C/D/F/G/H`,
         '2E', '2I',
-        '1A', '3rd C/E/F/H/I',
-        '1L', '3rd E/H/I/J/K',
-        '1D', '3rd B/E/F/I/J',
-        '1G', '3rd A/E/H/I/J',
+        '1A', `${t('thirdPlaceShort')} C/E/F/H/I`,
+        '1L', `${t('thirdPlaceShort')} E/H/I/J/K`,
+        '1D', `${t('thirdPlaceShort')} B/E/F/I/J`,
+        '1G', `${t('thirdPlaceShort')} A/E/H/I/J`,
         '2K', '2L',
         '1H', '2J',
-        '1B', '3rd E/F/G/I/J',
+        '1B', `${t('thirdPlaceShort')} E/F/G/I/J`,
         '2D', '2G',
         '1J', '2H',
-        '1K', '3rd D/E/I/J/L'
+        '1K', `${t('thirdPlaceShort')} D/E/I/J/L`
       ];
     }
 
@@ -565,18 +687,19 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isComplete) {
         bannerHTML = `
           <div class="progress-banner complete glass-panel">
-            <div class="progress-title">🎉 Group Stage Completed! (72/72 Matches Played)</div>
-            <div class="progress-description">All group stage matches have been played. The knockout stage bracket is fully calculated and unlocked!</div>
+            <div class="progress-title">${t('progressCompleteTitle')}</div>
+            <div class="progress-description">${t('progressCompleteDesc')}</div>
             <div class="progress-bar-container">
               <div class="progress-bar-fill" style="width: 100%;"></div>
             </div>
           </div>
         `;
       } else {
+        const titleText = `${t('progressIncompleteTitle')} (${playedCount} / ${totalCount})`;
         bannerHTML = `
           <div class="progress-banner incomplete glass-panel">
-            <div class="progress-title">⚠️ Group Stage Incomplete (${playedCount} / ${totalCount} Matches Played)</div>
-            <div class="progress-description">The knockout stage bracket will be filled once all group matches have been played. Please fill in all group stage scores first.</div>
+            <div class="progress-title">${titleText}</div>
+            <div class="progress-description">${t('progressIncompleteDesc')}</div>
             <div class="progress-bar-container">
               <div class="progress-bar-fill" style="width: ${pct}%;"></div>
             </div>
@@ -591,7 +714,7 @@ document.addEventListener('DOMContentLoaded', () => {
     worldCupData.knockoutStages.forEach(stage => {
       const tabBtn = document.createElement('button');
       tabBtn.className = `tab-btn sub-tab-btn ${activeKnockoutStage === stage.id ? 'active' : ''}`;
-      tabBtn.innerText = stage.name;
+      tabBtn.innerText = t(stage.id);
       tabBtn.dataset.stage = stage.id;
       tabBtn.addEventListener('click', (e) => {
         activeKnockoutStage = e.target.dataset.stage;
@@ -615,7 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isStageActive) {
         roundDiv = document.createElement('div');
         roundDiv.className = 'bracket-round active-round';
-        roundDiv.innerHTML = `<div class="round-header">${stage.name}</div>`;
+        roundDiv.innerHTML = `<div class="round-header">${t(stage.id)}</div>`;
       }
 
       for (let i = 0; i < stage.matches; i++) {
@@ -664,16 +787,23 @@ document.addEventListener('DOMContentLoaded', () => {
           currentRoundLosers.push(formatLoserPlaceholder(stage.id, i));
         }
 
-        const isMatchDisabled = !areAllGroupMatchesPlayed() || 
-                                homeTeam.startsWith('Winner ') || awayTeam.startsWith('Winner ') ||
-                                homeTeam.startsWith('Loser ') || awayTeam.startsWith('Loser ');
+        const isPlaceholder = (teamName) => {
+          return teamName === 'TBD' ||
+                 teamName.startsWith('Winner ') ||
+                 teamName.startsWith('Ganador ') ||
+                 teamName.startsWith('Loser ') ||
+                 teamName.startsWith('Perdedor ') ||
+                 teamName.startsWith('3rd ') ||
+                 teamName.startsWith('3º ');
+        };
+        const isMatchDisabled = !areAllGroupMatchesPlayed() || isPlaceholder(homeTeam) || isPlaceholder(awayTeam);
 
         if (isStageActive) {
           const matchDiv = document.createElement('div');
           matchDiv.className = 'bracket-match';
           let matchLabel = '';
           if (stage.id === 'final') {
-            matchLabel = `<div class="match-title" style="text-align: center; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--accent-color);">${i === 0 ? '🥉 THIRD-PLACE PLAY-OFF' : '🏆 GRAND FINAL'}</div>`;
+            matchLabel = `<div class="match-title" style="text-align: center; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--accent-color);">${i === 0 ? t('thirdPlacePlayoff') : t('grandFinal')}</div>`;
           }
           matchDiv.innerHTML = `
             ${matchLabel}
@@ -692,7 +822,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </span>
               <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="away" value="${score.away}" ${isMatchDisabled ? 'disabled' : ''}>
             </div>
-            <button class="btn-clear btn-clear-ko" data-key="${matchKey}" title="Restart match" ${isMatchDisabled ? 'disabled style="display:none;"' : ''}>
+            <button class="btn-clear btn-clear-ko" data-key="${matchKey}" title="${t('restartMatch')}" ${isMatchDisabled ? 'disabled style="display:none;"' : ''}>
               ${restartIconSVG}
             </button>
           `;

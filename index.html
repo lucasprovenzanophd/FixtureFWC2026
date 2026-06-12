@@ -16,10 +16,14 @@
 
   <header class="glass-panel main-header">
     <div class="header-content">
-      <h1>FIFA World Cup 2026™</h1>
-      <p>Interactive Fixture & Standings</p>
+      <h1 id="app-title">FIFA World Cup 2026™</h1>
+      <p id="app-subtitle">Interactive Fixture & Standings</p>
     </div>
     <div class="header-actions">
+      <div class="lang-toggle" id="lang-toggle-container">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="es">ES</button>
+      </div>
       <button id="themeToggleBtn" class="btn btn-outline theme-toggle-btn" aria-label="Toggle Theme">
         <span class="theme-icon">🌙</span>
       </button>
@@ -28,8 +32,8 @@
 
   <main class="container">
     <nav class="tabs glass-panel">
-      <button class="tab-btn active" data-target="group-stage">Group Stage</button>
-      <button class="tab-btn" data-target="knockout-stage">Knockout Stage</button>
+      <button class="tab-btn active" data-target="group-stage" id="tab-group">Group Stage</button>
+      <button class="tab-btn" data-target="knockout-stage" id="tab-knockout">Knockout Stage</button>
     </nav>
 
     <section id="group-stage" class="stage-section active">
@@ -50,7 +54,7 @@
   </main>
 
   <footer class="glass-panel main-footer">
-    <p>World Cup 2026 Fixture Tracker - Mobile Responsive & Local Storage Ready</p>
+    <p id="footer-text">World Cup 2026 Fixture Tracker - Mobile Responsive & Local Storage Ready</p>
     <button id="resetBtn" class="btn btn-danger btn-reset-bottom">Reset All Data</button>
   </footer>
 
