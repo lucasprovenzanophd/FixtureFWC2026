@@ -149,6 +149,19 @@ document.addEventListener('DOMContentLoaded', () => {
     return `Winner ${stageName} M${matchIndex + 1}`;
   }
 
+  function formatLoserPlaceholder(stageId, matchIndex) {
+    const stageNames = {
+      r32: 'R32',
+      r16: 'R16',
+      qf: 'QF',
+      sf: 'SF',
+      final: 'Final'
+    };
+    const stageName = stageNames[stageId] || stageId.toUpperCase();
+    return `Loser ${stageName} M${matchIndex + 1}`;
+  }
+
+
   function allocateThirds(qualifiedThirds, slots) {
     let result = null;
     const used = Array(8).fill(false);
@@ -591,9 +604,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const advancingTeams = getAdvancingTeams();
     
     let previousRoundWinners = advancingTeams;
+    let previousRoundLosers = [];
 
     worldCupData.knockoutStages.forEach((stage, stageIdx) => {
       let currentRoundWinners = [];
+      let currentRoundLosers = [];
       const isStageActive = stage.id === activeKnockoutStage;
       
       let roundDiv;
@@ -613,6 +628,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (stageIdx === 0) {
            homeTeam = advancingTeams[i * 2] || 'TBD';
            awayTeam = advancingTeams[i * 2 + 1] || 'TBD';
+        } else if (stage.id === 'final') {
+           if (i === 0) {
+              // 3rd Place Match: Loser SF M1 vs Loser SF M2
+              homeTeam = previousRoundLosers[0] || 'TBD';
+              awayTeam = previousRoundLosers[1] || 'TBD';
+           } else {
+              // The Final: Winner SF M1 vs Winner SF M2
+              homeTeam = previousRoundWinners[0] || 'TBD';
+              awayTeam = previousRoundWinners[1] || 'TBD';
+           }
         } else {
            const mapping = knockoutBracketMapping[stage.id][i];
            homeTeam = previousRoundWinners[mapping[0]] || 'TBD';
@@ -625,22 +650,33 @@ document.addEventListener('DOMContentLoaded', () => {
           if (parseInt(score.home) > parseInt(score.away)) {
             homeWinner = true;
             currentRoundWinners.push(homeTeam);
+            currentRoundLosers.push(awayTeam);
           } else if (parseInt(score.away) > parseInt(score.home)) {
             awayWinner = true;
             currentRoundWinners.push(awayTeam);
+            currentRoundLosers.push(homeTeam);
           } else {
             currentRoundWinners.push(formatWinnerPlaceholder(stage.id, i));
+            currentRoundLosers.push(formatLoserPlaceholder(stage.id, i));
           }
         } else {
           currentRoundWinners.push(formatWinnerPlaceholder(stage.id, i));
+          currentRoundLosers.push(formatLoserPlaceholder(stage.id, i));
         }
 
-        const isMatchDisabled = !areAllGroupMatchesPlayed() || homeTeam.startsWith('Winner ') || awayTeam.startsWith('Winner ');
+        const isMatchDisabled = !areAllGroupMatchesPlayed() || 
+                                homeTeam.startsWith('Winner ') || awayTeam.startsWith('Winner ') ||
+                                homeTeam.startsWith('Loser ') || awayTeam.startsWith('Loser ');
 
         if (isStageActive) {
           const matchDiv = document.createElement('div');
           matchDiv.className = 'bracket-match';
+          let matchLabel = '';
+          if (stage.id === 'final') {
+            matchLabel = `<div class="match-title" style="text-align: center; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--accent-color);">${i === 0 ? '🥉 THIRD-PLACE PLAY-OFF' : '🏆 GRAND FINAL'}</div>`;
+          }
           matchDiv.innerHTML = `
+            ${matchLabel}
             ${formatMatchDetails('knockout', stageIdx * 10 + i)}
             <div class="bracket-team ${homeWinner ? 'winner' : ''}">
               <span class="team" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start; min-width: 0;">
@@ -665,6 +701,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       previousRoundWinners = currentRoundWinners;
+      previousRoundLosers = currentRoundLosers;
       if (isStageActive) {
         bracketContainer.appendChild(roundDiv);
       }

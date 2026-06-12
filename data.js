@@ -80,6 +80,6 @@ const worldCupData = {
     { id: 'r16', name: 'Round of 16', matches: 8 },
     { id: 'qf', name: 'Quarter-finals', matches: 4 },
     { id: 'sf', name: 'Semi-finals', matches: 2 },
-    { id: 'final', name: 'Final', matches: 1 }
+    { id: 'final', name: 'Final', matches: 2 }
   ]
 };
