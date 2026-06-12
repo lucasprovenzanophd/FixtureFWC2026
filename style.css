@@ -450,6 +450,7 @@ body.light-theme::before {
   position: absolute;
   top: 8px;
   right: 8px;
+  z-index: 10;
   background: transparent;
   border: none;
   color: var(--text-secondary);
@@ -587,9 +588,9 @@ body.light-theme::before {
 
 .sub-tab-btn {
   flex: 0 1 auto;
-  font-size: 0.8rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  padding: 0.6rem 1rem;
+  border-radius: 0.75rem;
 }
 
 /* Footer & Bottom Reset Button */
@@ -950,4 +951,15 @@ body.light-theme .bracket-match.locked {
 body.light-theme .match-details.highlight-today {
   color: #ffffff;
   box-shadow: 0 2px 8px rgba(117, 170, 219, 0.4);
+}
+
+/* Faded match details for played matches */
+.played-match .match-details {
+  opacity: 0.45;
+  filter: blur(0.5px);
+  transition: all 0.3s ease;
+}
+.played-match:hover .match-details {
+  opacity: 0.8;
+  filter: blur(0px);
 }

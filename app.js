@@ -549,8 +549,9 @@ document.addEventListener('DOMContentLoaded', () => {
       let matchesHTML = `<div class="matches-list">`;
       matches.forEach(m => {
         const score = state.matches[m.matchKey] || { home: '', away: '' };
+        const isPlayedClass = (score.home !== '' && score.away !== '') ? 'played-match' : '';
         matchesHTML += `
-          <div class="match-row">
+          <div class="match-row ${isPlayedClass}">
             ${formatMatchDetails(m.matchKey)}
             <div class="match-content">
               <span class="team team-left">
@@ -615,11 +616,12 @@ document.addEventListener('DOMContentLoaded', () => {
       worldCupData.groupMatches.forEach((match, index) => {
         const matchKey = `group_${groupLetter}_m${index}`;
         const score = state.matches[matchKey] || { home: '', away: '' };
+        const isPlayedClass = (score.home !== '' && score.away !== '') ? 'played-match' : '';
         const homeTeam = teams[match[0]];
         const awayTeam = teams[match[1]];
         
         matchesHTML += `
-          <div class="match-row">
+          <div class="match-row ${isPlayedClass}">
             ${formatMatchDetails(matchKey)}
             <div class="match-content">
               <span class="team team-left">
@@ -993,7 +995,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isStageActive) {
           const matchDiv = document.createElement('div');
           const isLocked = !isStageAvailable(stage.id);
-          matchDiv.className = `bracket-match ${isLocked ? 'locked' : ''}`;
+          const isPlayedClass = (score.home !== '' && score.away !== '') ? 'played-match' : '';
+          matchDiv.className = `bracket-match ${isLocked ? 'locked' : ''} ${isPlayedClass}`;
           let matchLabel = '';
           if (stage.id === 'final') {
             matchLabel = `<div class="match-title" style="text-align: center; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--accent-color);">${i === 0 ? t('thirdPlacePlayoff') : t('grandFinal')}</div>`;
