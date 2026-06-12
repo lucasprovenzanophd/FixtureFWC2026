@@ -108,6 +108,47 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  const teamShortNames = {
+    'Mexico': 'MEX', 'South Africa': 'RSA', 'Korea Republic': 'KOR', 'Czechia': 'CZE',
+    'Canada': 'CAN', 'Bosnia and Herzegovina': 'BIH', 'Qatar': 'QAT', 'Switzerland': 'SUI',
+    'Brazil': 'BRA', 'Morocco': 'MAR', 'Haiti': 'HAI', 'Scotland': 'SCO',
+    'United States': 'USA', 'Paraguay': 'PAR', 'Australia': 'AUS', 'Türkiye': 'TUR',
+    'Germany': 'GER', 'Curaçao': 'CUW', 'Ivory Coast': 'CIV', 'Ecuador': 'ECU',
+    'Netherlands': 'NED', 'Japan': 'JPN', 'Sweden': 'SWE', 'Tunisia': 'TUN',
+    'Belgium': 'BEL', 'Egypt': 'EGY', 'Iran': 'IRN', 'New Zealand': 'NZL',
+    'Spain': 'ESP', 'Cape Verde': 'CPV', 'Saudi Arabia': 'KSA', 'Uruguay': 'URU',
+    'France': 'FRA', 'Senegal': 'SEN', 'Iraq': 'IRQ', 'Norway': 'NOR',
+    'Argentina': 'ARG', 'Algeria': 'ALG', 'Austria': 'AUT', 'Jordan': 'JOR',
+    'Portugal': 'POR', 'DR Congo': 'COD', 'Uzbekistan': 'UZB', 'Colombia': 'COL',
+    'England': 'ENG', 'Croatia': 'CRO', 'Ghana': 'GHA', 'Panama': 'PAN'
+  };
+
+  function getTeamShortName(teamName) {
+    if (teamShortNames[teamName]) {
+      return teamShortNames[teamName];
+    }
+    // Handle "Winner XXX MX" placeholders
+    if (teamName.startsWith('Winner ')) {
+      return teamName.replace('Winner ', 'W ');
+    }
+    return teamName;
+  }
+
+  function formatWinnerPlaceholder(stageId, matchIndex) {
+    const stageNames = {
+      r32: 'R32',
+      r16: 'R16',
+      qf: 'QF',
+      sf: 'SF',
+      final: 'Final'
+    };
+    const stageName = stageNames[stageId] || stageId.toUpperCase();
+    if (stageId === 'final') {
+      return `Winner Final`;
+    }
+    return `Winner ${stageName} M${matchIndex + 1}`;
+  }
+
   function getTeamFlagHTML(teamName) {
     const code = worldCupData.teamFlags[teamName];
     if (code) {
@@ -212,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
       html += `
         <tr class="${rowClass}">
           <td class="team-name" style="display: flex; align-items: center; gap: 0.5rem;">
-            ${getTeamFlagHTML(s.name)} <span>${s.name}</span>
+            ${getTeamFlagHTML(s.name)} <span class="team-name-text"><span class="full-name">${s.name}</span><span class="short-name">${getTeamShortName(s.name)}</span></span>
           </td>
           <td>${s.pld}</td><td>${s.w}</td><td>${s.d}</td><td>${s.l}</td><td>${s.gd}</td><td>${s.pts}</td>
         </tr>
@@ -259,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ${formatMatchDetails('group', index)}
             <div class="match-content">
               <span class="team team-left">
-                <span>${homeTeam}</span>
+                <span class="team-name-text"><span class="full-name">${homeTeam}</span><span class="short-name">${getTeamShortName(homeTeam)}</span></span>
                 ${getTeamFlagHTML(homeTeam)}
               </span>
               <div class="score-inputs">
@@ -269,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
               <span class="team team-right">
                 ${getTeamFlagHTML(awayTeam)}
-                <span>${awayTeam}</span>
+                <span class="team-name-text"><span class="full-name">${awayTeam}</span><span class="short-name">${getTeamShortName(awayTeam)}</span></span>
               </span>
             </div>
             <button class="btn-clear" data-key="${matchKey}" title="Restart match">
@@ -362,7 +403,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getAdvancingTeams() {
     if (!areAllGroupMatchesPlayed()) {
-      return Array(32).fill('TBD');
+      return [
+        '1A', '2A', '1B', '2B', '1C', '2C', '1D', '2D',
+        '1E', '2E', '1F', '2F', '1G', '2G', '1H', '2H',
+        '1I', '2I', '1J', '2J', '1K', '2K', '1L', '2L',
+        '3rd 1', '3rd 2', '3rd 3', '3rd 4', '3rd 5', '3rd 6', '3rd 7', '3rd 8'
+      ];
     }
 
     let top2 = [];
@@ -476,13 +522,13 @@ document.addEventListener('DOMContentLoaded', () => {
             awayWinner = true;
             currentRoundWinners.push(awayTeam);
           } else {
-            currentRoundWinners.push('Winner ' + matchKey);
+            currentRoundWinners.push(formatWinnerPlaceholder(stage.id, i));
           }
         } else {
-          currentRoundWinners.push('Winner ' + matchKey);
+          currentRoundWinners.push(formatWinnerPlaceholder(stage.id, i));
         }
 
-        const isMatchDisabled = homeTeam === 'TBD' || awayTeam === 'TBD';
+        const isMatchDisabled = !areAllGroupMatchesPlayed() || homeTeam.startsWith('Winner ') || awayTeam.startsWith('Winner ');
 
         if (isStageActive) {
           const matchDiv = document.createElement('div');
@@ -492,14 +538,14 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="bracket-team ${homeWinner ? 'winner' : ''}">
               <span class="team" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start; min-width: 0;">
                 ${getTeamFlagHTML(homeTeam)}
-                <span class="team-name-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${homeTeam}</span>
+                <span class="team-name-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span class="full-name">${homeTeam}</span><span class="short-name">${getTeamShortName(homeTeam)}</span></span>
               </span>
               <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="home" value="${score.home}" ${isMatchDisabled ? 'disabled' : ''}>
             </div>
             <div class="bracket-team ${awayWinner ? 'winner' : ''}">
               <span class="team" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start; min-width: 0;">
                 ${getTeamFlagHTML(awayTeam)}
-                <span class="team-name-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${awayTeam}</span>
+                <span class="team-name-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span class="full-name">${awayTeam}</span><span class="short-name">${getTeamShortName(awayTeam)}</span></span>
               </span>
               <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="away" value="${score.away}" ${isMatchDisabled ? 'disabled' : ''}>
             </div>

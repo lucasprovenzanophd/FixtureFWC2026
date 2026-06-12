@@ -712,3 +712,22 @@ body.light-theme .score-input:disabled {
   border-color: rgba(0, 0, 0, 0.05);
 }
 
+/* Short/Full Name toggling */
+.team-name-text .short-name {
+  display: none;
+}
+
+.team-name-text .full-name {
+  display: inline;
+}
+
+@media (max-width: 600px) {
+  .team-name-text .short-name {
+    display: inline;
+  }
+  .team-name-text .full-name {
+    display: none;
+  }
+}
+
+
