@@ -27,13 +27,13 @@
 
 body.light-theme {
   --bg-color: #f0f6fc;
-  --text-primary: #3c2016;
-  --text-secondary: #6b5a54;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
   --glass-bg: #ffffff;
   --glass-border: rgba(117, 170, 219, 0.3);
   --glass-shadow: 0 10px 30px 0 rgba(117, 170, 219, 0.12);
-  --accent-color: #843511;
-  --accent-hover: #6d290b;
+  --accent-color: #75aadb;
+  --accent-hover: #568ec3;
   
   --blob-1: #75aadb;
   --blob-2: #fcbf45;
@@ -765,30 +765,32 @@ body.light-theme .tab-btn:hover {
 }
 
 body.light-theme .tab-btn.active {
-  box-shadow: 0 4px 12px rgba(132, 53, 17, 0.3);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(117, 170, 219, 0.3);
 }
 
 body.light-theme .lang-btn.active {
-  box-shadow: 0 2px 6px rgba(132, 53, 17, 0.2);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(117, 170, 219, 0.2);
 }
 
 body.light-theme .header-content h1 {
-  background: linear-gradient(to right, #843511, #fcbf45);
+  background: linear-gradient(to right, #75aadb, #fcbf45);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 body.light-theme .progress-banner.incomplete {
-  background: rgba(132, 53, 17, 0.05);
-  border: 1px solid rgba(132, 53, 17, 0.2);
+  background: rgba(117, 170, 219, 0.05);
+  border: 1px solid rgba(117, 170, 219, 0.2);
 }
 
 body.light-theme .progress-banner.incomplete .progress-title {
-  color: #843511;
+  color: #568ec3;
 }
 
 body.light-theme .progress-banner.incomplete .progress-bar-fill {
-  background: linear-gradient(90deg, #fcbf45, #843511);
+  background: linear-gradient(90deg, #fcbf45, #75aadb);
 }
 
 /* Short/Full Name toggling */
