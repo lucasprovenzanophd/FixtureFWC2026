@@ -768,6 +768,29 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
   }
 
+  function isKnockoutStageComplete(stageId) {
+    const stage = worldCupData.knockoutStages.find(s => s.id === stageId);
+    if (!stage) return false;
+    for (let i = 0; i < stage.matches; i++) {
+      const matchKey = `${stageId}_m${i}`;
+      const score = state.knockout[matchKey];
+      if (!score || score.home === '' || score.away === '' || score.home === undefined || score.away === undefined) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function isStageAvailable(stageId) {
+    if (!areAllGroupMatchesPlayed()) return false;
+    if (stageId === 'r32') return true;
+    if (stageId === 'r16') return isKnockoutStageComplete('r32');
+    if (stageId === 'qf') return isKnockoutStageComplete('r16');
+    if (stageId === 'sf') return isKnockoutStageComplete('qf');
+    if (stageId === 'final') return isKnockoutStageComplete('sf');
+    return false;
+  }
+
   function renderKnockoutStage() {
     // Render progress banner
     const progressContainer = document.getElementById('knockout-progress-container');
@@ -806,8 +829,14 @@ document.addEventListener('DOMContentLoaded', () => {
     knockoutTabs.innerHTML = '';
     worldCupData.knockoutStages.forEach(stage => {
       const tabBtn = document.createElement('button');
-      tabBtn.className = `tab-btn sub-tab-btn ${activeKnockoutStage === stage.id ? 'active' : ''}`;
-      tabBtn.innerText = t(stage.id);
+      const available = isStageAvailable(stage.id);
+      const activeClass = activeKnockoutStage === stage.id ? 'active' : '';
+      const lockedClass = !available ? 'locked-tab' : '';
+      tabBtn.className = `tab-btn sub-tab-btn ${activeClass} ${lockedClass}`;
+      
+      const tabName = t(stage.id);
+      tabBtn.innerText = available ? tabName : `🔒 ${tabName}`;
+      
       tabBtn.dataset.stage = stage.id;
       tabBtn.addEventListener('click', (e) => {
         activeKnockoutStage = e.target.dataset.stage;
@@ -893,7 +922,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isStageActive) {
           const matchDiv = document.createElement('div');
-          matchDiv.className = 'bracket-match';
+          const isLocked = !isStageAvailable(stage.id);
+          matchDiv.className = `bracket-match ${isLocked ? 'locked' : ''}`;
           let matchLabel = '';
           if (stage.id === 'final') {
             matchLabel = `<div class="match-title" style="text-align: center; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--accent-color);">${i === 0 ? t('thirdPlacePlayoff') : t('grandFinal')}</div>`;

@@ -849,4 +849,24 @@ body.light-theme .progress-banner.incomplete .progress-bar-fill {
   box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
 }
 
+/* Locked Stages and Match Cards */
+.bracket-match.locked {
+  filter: grayscale(100%) blur(1.5px);
+  opacity: 0.45;
+  pointer-events: none;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.sub-tab-btn.locked-tab {
+  opacity: 0.5;
+  filter: grayscale(100%);
+}
+
+body.light-theme .bracket-match.locked {
+  filter: grayscale(100%) blur(1.2px);
+  opacity: 0.55;
+}
+
+
 
