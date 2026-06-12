@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
       subtitle: 'Interactive Fixture & Standings',
       tabGroup: 'Group Stage',
       tabKnockout: 'Knockout Stage',
+      viewByGroup: 'By Group',
+      viewByDate: 'By Date',
       colTeam: 'Team',
       colP: 'P',
       colW: 'W',
@@ -80,6 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
       subtitle: 'Calendario Interactivo y Clasificaciones',
       tabGroup: 'Fase de Grupos',
       tabKnockout: 'Eliminatorias',
+      viewByGroup: 'Por Grupo',
+      viewByDate: 'Por Fecha',
       colTeam: 'Equipo',
       colP: 'PJ',
       colW: 'PG',
@@ -112,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   let currentLang = localStorage.getItem('wc2026_lang') || 'es';
+  let currentGroupView = 'by-group'; // 'by-group' or 'by-date'
 
   function t(key) {
     return translations[currentLang][key] || translations['en'][key] || key;
@@ -135,6 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('app-subtitle').innerText = t('subtitle');
     document.getElementById('tab-group').innerText = t('tabGroup');
     document.getElementById('tab-knockout').innerText = t('tabKnockout');
+    const btnViewGroup = document.getElementById('btn-view-group');
+    if (btnViewGroup) btnViewGroup.innerText = t('viewByGroup');
+    const btnViewDate = document.getElementById('btn-view-date');
+    if (btnViewDate) btnViewDate.innerText = t('viewByDate');
     document.getElementById('footer-text').innerText = t('footer');
     resetBtn.innerText = t('resetAll');
   }
@@ -209,14 +218,32 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Tab switching
-  document.querySelectorAll('.tab-btn').forEach(btn => {
+  document.querySelectorAll('.tabs .tab-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tabs .tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.stage-section').forEach(s => s.classList.remove('active'));
       e.target.classList.add('active');
       document.getElementById(e.target.dataset.target).classList.add('active');
     });
   });
+
+  // Group Stage View Toggle
+  const btnViewGroup = document.getElementById('btn-view-group');
+  const btnViewDate = document.getElementById('btn-view-date');
+  if (btnViewGroup && btnViewDate) {
+    btnViewGroup.addEventListener('click', () => {
+      currentGroupView = 'by-group';
+      btnViewGroup.classList.add('active');
+      btnViewDate.classList.remove('active');
+      renderGroupStage();
+    });
+    btnViewDate.addEventListener('click', () => {
+      currentGroupView = 'by-date';
+      btnViewDate.classList.add('active');
+      btnViewGroup.classList.remove('active');
+      renderGroupStage();
+    });
+  }
 
   const teamShortNames = {
     'Mexico': 'MEX', 'South Africa': 'RSA', 'Korea Republic': 'KOR', 'Czechia': 'CZE',
@@ -365,6 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function formatMatchDetails(matchKey) {
     let dateStr = '';
     let venue = '';
+    let highlightClass = '';
 
     if (typeof matchMetadata !== 'undefined' && matchMetadata[matchKey]) {
       const meta = matchMetadata[matchKey];
@@ -376,9 +404,15 @@ document.addEventListener('DOMContentLoaded', () => {
         hour: 'numeric', minute: '2-digit'
       });
       venue = meta.stadium;
+      
+      const optionsDateOnly = { timeZone: 'America/Argentina/Buenos_Aires', year: 'numeric', month: '2-digit', day: '2-digit' };
+      const formatter = new Intl.DateTimeFormat('en-CA', optionsDateOnly);
+      if (formatter.format(matchDate) === formatter.format(new Date())) {
+        highlightClass = 'highlight-today';
+      }
     }
 
-    return `<div class="match-details">${dateStr} &bull; ${venue}</div>`;
+    return `<div class="match-details ${highlightClass}">${dateStr} &bull; ${venue}</div>`;
   }
 
   const restartIconSVG = `
@@ -462,7 +496,96 @@ document.addEventListener('DOMContentLoaded', () => {
     tbody.innerHTML = html;
   }
 
-  function initGroupStage() {
+  function renderGroupStage() {
+    if (currentGroupView === 'by-group') {
+      renderGroupsByGroup();
+    } else {
+      renderGroupsByDate();
+    }
+  }
+
+  function renderGroupsByDate() {
+    groupsContainer.innerHTML = '';
+    
+    // Gather all group matches
+    const allMatches = [];
+    Object.keys(worldCupData.groups).forEach(groupLetter => {
+      const teams = worldCupData.groups[groupLetter];
+      worldCupData.groupMatches.forEach((match, index) => {
+        const matchKey = `group_${groupLetter}_m${index}`;
+        const homeTeam = teams[match[0]];
+        const awayTeam = teams[match[1]];
+        const meta = matchMetadata[matchKey];
+        if (meta) {
+          allMatches.push({
+            matchKey, groupLetter, index, homeTeam, awayTeam,
+            utcDate: meta.utcDate, stadium: meta.stadium
+          });
+        }
+      });
+    });
+
+    // Sort chronologically
+    allMatches.sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate));
+
+    // Group by localized date string
+    const matchesByDay = {};
+    allMatches.forEach(m => {
+      const d = new Date(m.utcDate);
+      const dateKey = d.toLocaleString(currentLang, {
+          timeZone: 'America/Argentina/Buenos_Aires',
+          weekday: 'long', month: 'long', day: 'numeric'
+      });
+      if (!matchesByDay[dateKey]) matchesByDay[dateKey] = [];
+      matchesByDay[dateKey].push(m);
+    });
+
+    // Render cards by day
+    Object.keys(matchesByDay).forEach(dateStr => {
+      const matches = matchesByDay[dateStr];
+      const groupCard = document.createElement('div');
+      groupCard.className = 'glass-panel group-card';
+      
+      let matchesHTML = `<div class="matches-list">`;
+      matches.forEach(m => {
+        const score = state.matches[m.matchKey] || { home: '', away: '' };
+        matchesHTML += `
+          <div class="match-row">
+            ${formatMatchDetails(m.matchKey)}
+            <div class="match-content">
+              <span class="team team-left">
+                <span class="team-name-text"><span class="full-name">${m.homeTeam}</span><span class="short-name">${getTeamShortName(m.homeTeam)}</span></span>
+                ${getTeamFlagHTML(m.homeTeam)}
+              </span>
+              <div class="score-inputs">
+                <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="10" class="score-input group-input" data-key="${m.matchKey}" data-side="home" value="${score.home}">
+                <span>-</span>
+                <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="10" class="score-input group-input" data-key="${m.matchKey}" data-side="away" value="${score.away}">
+              </div>
+              <span class="team team-right">
+                ${getTeamFlagHTML(m.awayTeam)}
+                <span class="team-name-text"><span class="full-name">${m.awayTeam}</span><span class="short-name">${getTeamShortName(m.awayTeam)}</span></span>
+              </span>
+            </div>
+            <button class="btn-clear" data-key="${m.matchKey}" title="${t('restartMatch')}">
+              ${restartIconSVG}
+            </button>
+          </div>
+        `;
+      });
+      matchesHTML += `</div>`;
+      
+      groupCard.innerHTML = `
+        <div class="group-header" style="text-transform: capitalize;">${dateStr}</div>
+        <div class="group-content">
+          ${matchesHTML}
+        </div>
+      `;
+      groupsContainer.appendChild(groupCard);
+    });
+  }
+
+  function renderGroupsByGroup() {
     groupsContainer.innerHTML = '';
     
     Object.keys(worldCupData.groups).forEach(groupLetter => {
@@ -957,7 +1080,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function renderAll() {
-    initGroupStage();
+    renderGroupStage();
     renderKnockoutStage();
   }
 

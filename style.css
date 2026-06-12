@@ -936,5 +936,18 @@ body.light-theme .bracket-match.locked {
   opacity: 0.55;
 }
 
+/* Today's match highlight */
+.match-details.highlight-today {
+  color: #f8fafc;
+  font-weight: 800;
+  background: var(--accent-color);
+  border-radius: 6px;
+  padding: 4px 10px;
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
 
-
+body.light-theme .match-details.highlight-today {
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(117, 170, 219, 0.4);
+}
