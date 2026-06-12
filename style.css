@@ -23,6 +23,7 @@
   --bracket-team-bg: rgba(255, 255, 255, 0.03);
   --header-scrolled-bg: rgba(15, 23, 42, 0.9);
   --header-scrolled-border: rgba(255, 255, 255, 0.05);
+  --score-color: #38bdf8;
 }
 
 body.light-theme {
@@ -48,13 +49,14 @@ body.light-theme {
   --bracket-team-bg: #f8fbfe;
   --header-scrolled-bg: rgba(255, 255, 255, 0.95);
   --header-scrolled-border: rgba(117, 170, 219, 0.25);
+  --score-color: #0f52ba;
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', sans-serif;
 }
 
 body {
@@ -477,10 +479,13 @@ body.light-theme::before {
   background: var(--input-bg);
   border: 1px solid var(--glass-border);
   border-radius: 0.375rem;
-  color: var(--text-primary);
+  color: var(--score-color);
+  font-family: 'Caveat', cursive;
   text-align: center;
-  font-weight: 800;
-  font-size: 1rem;
+  font-weight: 700;
+  font-size: 1.6rem;
+  padding: 0 0 2px 0;
+  line-height: 34px;
   -moz-appearance: textfield;
 }
 

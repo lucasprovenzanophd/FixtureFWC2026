@@ -579,9 +579,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${getTeamFlagHTML(homeTeam)}
               </span>
               <div class="score-inputs">
-                <input type="number" min="0" class="score-input group-input" data-key="${matchKey}" data-side="home" value="${score.home}">
+                <input type="number" min="0" max="10" class="score-input group-input" data-key="${matchKey}" data-side="home" value="${score.home}">
                 <span>-</span>
-                <input type="number" min="0" class="score-input group-input" data-key="${matchKey}" data-side="away" value="${score.away}">
+                <input type="number" min="0" max="10" class="score-input group-input" data-key="${matchKey}" data-side="away" value="${score.away}">
               </div>
               <span class="team team-right">
                 ${getTeamFlagHTML(awayTeam)}
@@ -617,8 +617,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const side = e.target.dataset.side;
       const groupLetter = key.split('_')[1];
       
+      let val = e.target.value;
+      if (val !== '') {
+        let parsed = parseInt(val);
+        if (isNaN(parsed) || parsed < 0) parsed = 0;
+        if (parsed > 10) parsed = 10;
+        val = parsed.toString();
+        e.target.value = val; // Sync display input
+      }
+      
       if (!state.matches[key]) state.matches[key] = { home: '', away: '' };
-      state.matches[key][side] = e.target.value;
+      state.matches[key][side] = val;
       saveState();
       
       // Update standings for this group only
@@ -897,14 +906,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${getTeamFlagHTML(homeTeam)}
                 <span class="team-name-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span class="full-name">${homeTeam}</span><span class="short-name">${getTeamShortName(homeTeam)}</span></span>
               </span>
-              <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="home" value="${score.home}" ${isMatchDisabled ? 'disabled' : ''}>
+              <input type="number" min="0" max="10" class="score-input knockout-input" data-key="${matchKey}" data-side="home" value="${score.home}" ${isMatchDisabled ? 'disabled' : ''}>
             </div>
             <div class="bracket-team ${awayWinner ? 'winner' : ''}">
               <span class="team" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start; min-width: 0;">
                 ${getTeamFlagHTML(awayTeam)}
                 <span class="team-name-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span class="full-name">${awayTeam}</span><span class="short-name">${getTeamShortName(awayTeam)}</span></span>
               </span>
-              <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="away" value="${score.away}" ${isMatchDisabled ? 'disabled' : ''}>
+              <input type="number" min="0" max="10" class="score-input knockout-input" data-key="${matchKey}" data-side="away" value="${score.away}" ${isMatchDisabled ? 'disabled' : ''}>
             </div>
             <button class="btn-clear btn-clear-ko" data-key="${matchKey}" title="${t('restartMatch')}" ${isMatchDisabled ? 'disabled style="display:none;"' : ''}>
               ${restartIconSVG}
@@ -928,8 +937,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const key = e.target.dataset.key;
       const side = e.target.dataset.side;
       
+      let val = e.target.value;
+      if (val !== '') {
+        let parsed = parseInt(val);
+        if (isNaN(parsed) || parsed < 0) parsed = 0;
+        if (parsed > 10) parsed = 10;
+        val = parsed.toString();
+        e.target.value = val; // Sync display input
+      }
+      
       if (!state.knockout[key]) state.knockout[key] = { home: '', away: '' };
-      state.knockout[key][side] = e.target.value;
+      state.knockout[key][side] = val;
       saveState();
       
       saveActiveInput();
