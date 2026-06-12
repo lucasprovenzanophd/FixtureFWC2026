@@ -237,7 +237,7 @@ body.light-theme::before {
   gap: 1rem;
   padding: 0.5rem;
   border-radius: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   overflow-x: auto;
   justify-content: center;
   max-width: 800px;
@@ -379,6 +379,7 @@ body.light-theme::before {
   text-align: center;
   margin-bottom: 0.75rem;
   padding: 0 1.5rem;
+  align-self: center;
 }
 
 .match-content {
@@ -587,7 +588,7 @@ body.light-theme::before {
 }
 
 .sub-tab-btn {
-  flex: 0 1 auto;
+  flex: 1;
   font-size: 0.9rem;
   padding: 0.6rem 1rem;
   border-radius: 0.75rem;
