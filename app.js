@@ -47,6 +47,17 @@ document.addEventListener('DOMContentLoaded', () => {
     knockout: {} // key: "r32_m0", value: { home: '', away: '' }
   };
 
+  // Dev testing helper: appending ?mock=true fills all group stage matches automatically
+  if (new URLSearchParams(window.location.search).get('mock') === 'true') {
+    Object.keys(worldCupData.groups).forEach(groupLetter => {
+      worldCupData.groupMatches.forEach((match, index) => {
+        const matchKey = `group_${groupLetter}_m${index}`;
+        state.matches[matchKey] = { home: '2', away: '1' };
+      });
+    });
+    localStorage.setItem('wc2026_state', JSON.stringify(state));
+  }
+
   let activeInputInfo = null;
   let activeKnockoutStage = 'r32';
 
@@ -326,7 +337,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  function getGroupStageProgress() {
+    let playedCount = 0;
+    let totalCount = 0;
+    
+    Object.keys(worldCupData.groups).forEach(groupLetter => {
+      worldCupData.groupMatches.forEach((match, index) => {
+        totalCount++;
+        const matchKey = `group_${groupLetter}_m${index}`;
+        const score = state.matches[matchKey];
+        if (score && score.home !== '' && score.away !== '' && score.home !== undefined && score.away !== undefined) {
+          playedCount++;
+        }
+      });
+    });
+    
+    return { playedCount, totalCount };
+  }
+
+  function areAllGroupMatchesPlayed() {
+    const { playedCount, totalCount } = getGroupStageProgress();
+    return playedCount === totalCount;
+  }
+
   function getAdvancingTeams() {
+    if (!areAllGroupMatchesPlayed()) {
+      return Array(32).fill('TBD');
+    }
+
     let top2 = [];
     let thirds = [];
     
@@ -351,6 +389,38 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderKnockoutStage() {
+    // Render progress banner
+    const progressContainer = document.getElementById('knockout-progress-container');
+    if (progressContainer) {
+      const { playedCount, totalCount } = getGroupStageProgress();
+      const pct = totalCount > 0 ? (playedCount / totalCount) * 100 : 0;
+      const isComplete = playedCount === totalCount;
+      
+      let bannerHTML = '';
+      if (isComplete) {
+        bannerHTML = `
+          <div class="progress-banner complete glass-panel">
+            <div class="progress-title">🎉 Group Stage Completed! (72/72 Matches Played)</div>
+            <div class="progress-description">All group stage matches have been played. The knockout stage bracket is fully calculated and unlocked!</div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 100%;"></div>
+            </div>
+          </div>
+        `;
+      } else {
+        bannerHTML = `
+          <div class="progress-banner incomplete glass-panel">
+            <div class="progress-title">⚠️ Group Stage Incomplete (${playedCount} / ${totalCount} Matches Played)</div>
+            <div class="progress-description">The knockout stage bracket will be filled once all group matches have been played. Please fill in all group stage scores first.</div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: ${pct}%;"></div>
+            </div>
+          </div>
+        `;
+      }
+      progressContainer.innerHTML = bannerHTML;
+    }
+
     // Render Knockout Tabs
     knockoutTabs.innerHTML = '';
     worldCupData.knockoutStages.forEach(stage => {
@@ -412,6 +482,8 @@ document.addEventListener('DOMContentLoaded', () => {
           currentRoundWinners.push('Winner ' + matchKey);
         }
 
+        const isMatchDisabled = homeTeam === 'TBD' || awayTeam === 'TBD';
+
         if (isStageActive) {
           const matchDiv = document.createElement('div');
           matchDiv.className = 'bracket-match';
@@ -422,16 +494,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${getTeamFlagHTML(homeTeam)}
                 <span class="team-name-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${homeTeam}</span>
               </span>
-              <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="home" value="${score.home}">
+              <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="home" value="${score.home}" ${isMatchDisabled ? 'disabled' : ''}>
             </div>
             <div class="bracket-team ${awayWinner ? 'winner' : ''}">
               <span class="team" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start; min-width: 0;">
                 ${getTeamFlagHTML(awayTeam)}
                 <span class="team-name-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${awayTeam}</span>
               </span>
-              <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="away" value="${score.away}">
+              <input type="number" min="0" class="score-input knockout-input" data-key="${matchKey}" data-side="away" value="${score.away}" ${isMatchDisabled ? 'disabled' : ''}>
             </div>
-            <button class="btn-clear btn-clear-ko" data-key="${matchKey}" title="Restart match">
+            <button class="btn-clear btn-clear-ko" data-key="${matchKey}" title="Restart match" ${isMatchDisabled ? 'disabled style="display:none;"' : ''}>
               ${restartIconSVG}
             </button>
           `;
