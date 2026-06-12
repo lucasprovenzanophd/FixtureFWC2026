@@ -149,6 +149,62 @@ document.addEventListener('DOMContentLoaded', () => {
     return `Winner ${stageName} M${matchIndex + 1}`;
   }
 
+  function allocateThirds(qualifiedThirds, slots) {
+    let result = null;
+    const used = Array(8).fill(false);
+    const current = [];
+
+    function backtrack(index) {
+      if (result) return;
+      if (index === 8) {
+        result = [...current];
+        return;
+      }
+      for (let i = 0; i < 8; i++) {
+        if (!used[i]) {
+          const team = qualifiedThirds[i];
+          if (slots[index].allowed.includes(team.group)) {
+            used[i] = true;
+            current.push(team);
+            backtrack(index + 1);
+            current.pop();
+            used[i] = false;
+          }
+        }
+      }
+    }
+
+    backtrack(0);
+    return result || qualifiedThirds;
+  }
+
+  const knockoutBracketMapping = {
+    r16: [
+      [1, 4],   // Match 89: Winner Match 74 (index 1) vs Winner Match 77 (index 4)
+      [0, 2],   // Match 90: Winner Match 73 (index 0) vs Winner Match 75 (index 2)
+      [3, 5],   // Match 91: Winner Match 76 (index 3) vs Winner Match 78 (index 5)
+      [6, 7],   // Match 92: Winner Match 79 (index 6) vs Winner Match 80 (index 7)
+      [10, 11], // Match 93: Winner Match 83 (index 10) vs Winner Match 84 (index 11)
+      [8, 9],   // Match 94: Winner Match 81 (index 8) vs Winner Match 82 (index 9)
+      [13, 15], // Match 95: Winner Match 86 (index 13) vs Winner Match 88 (index 15)
+      [12, 14]  // Match 96: Winner Match 85 (index 12) vs Winner Match 87 (index 14)
+    ],
+    qf: [
+      [0, 1],   // Match 97: Winner Match 89 (index 0) vs Winner Match 90 (index 1)
+      [4, 5],   // Match 98: Winner Match 93 (index 4) vs Winner Match 94 (index 5)
+      [2, 3],   // Match 99: Winner Match 91 (index 2) vs Winner Match 92 (index 3)
+      [6, 7]    // Match 100: Winner Match 95 (index 6) vs Winner Match 96 (index 7)
+    ],
+    sf: [
+      [0, 1],   // Match 101: Winner Match 97 (index 0) vs Winner Match 98 (index 1)
+      [2, 3]    // Match 102: Winner Match 99 (index 2) vs Winner Match 100 (index 3)
+    ],
+    final: [
+      [0, 1]    // Match 104: Winner Match 101 (index 0) vs Winner Match 102 (index 1)
+    ]
+  };
+
+
   function getTeamFlagHTML(teamName) {
     const code = worldCupData.teamFlags[teamName];
     if (code) {
@@ -404,34 +460,84 @@ document.addEventListener('DOMContentLoaded', () => {
   function getAdvancingTeams() {
     if (!areAllGroupMatchesPlayed()) {
       return [
-        '1A', '2A', '1B', '2B', '1C', '2C', '1D', '2D',
-        '1E', '2E', '1F', '2F', '1G', '2G', '1H', '2H',
-        '1I', '2I', '1J', '2J', '1K', '2K', '1L', '2L',
-        '3rd 1', '3rd 2', '3rd 3', '3rd 4', '3rd 5', '3rd 6', '3rd 7', '3rd 8'
+        '2A', '2B',
+        '1E', '3rd A/B/C/D/F',
+        '1F', '2C',
+        '1C', '2F',
+        '1I', '3rd C/D/F/G/H',
+        '2E', '2I',
+        '1A', '3rd C/E/F/H/I',
+        '1L', '3rd E/H/I/J/K',
+        '1D', '3rd B/E/F/I/J',
+        '1G', '3rd A/E/H/I/J',
+        '2K', '2L',
+        '1H', '2J',
+        '1B', '3rd E/F/G/I/J',
+        '2D', '2G',
+        '1J', '2H',
+        '1K', '3rd D/E/I/J/L'
       ];
     }
 
-    let top2 = [];
-    let thirds = [];
-    
+    const standingsByGroup = {};
     Object.keys(worldCupData.groups).forEach(groupLetter => {
       const standings = calculateStandings(groupLetter);
-      top2.push(standings[0]);
-      top2.push(standings[1]);
-      thirds.push(standings[2]);
+      standingsByGroup[groupLetter] = {
+        winner: standings[0].name,
+        runnerUp: standings[1].name,
+        third: standings[2].name
+      };
     });
-    
-    // Sort 3rd place teams to find top 8
+
+    let thirds = [];
+    Object.keys(worldCupData.groups).forEach(groupLetter => {
+      const standings = calculateStandings(groupLetter);
+      thirds.push({
+        name: standings[2].name,
+        group: groupLetter,
+        pts: standings[2].pts,
+        gd: standings[2].gd,
+        gf: standings[2].gf
+      });
+    });
     thirds.sort((a, b) => {
       if (b.pts !== a.pts) return b.pts - a.pts;
       if (b.gd !== a.gd) return b.gd - a.gd;
       return b.gf - a.gf;
     });
-    
-    const advancingThirds = thirds.slice(0, 8);
-    const allAdvancing = [...top2, ...advancingThirds];
-    
-    return allAdvancing.map(t => t.name);
+    const qualifiedThirds = thirds.slice(0, 8);
+
+    const slots = [
+      { name: '1E', allowed: ['A', 'B', 'C', 'D', 'F'] },
+      { name: '1I', allowed: ['C', 'D', 'F', 'G', 'H'] },
+      { name: '1A', allowed: ['C', 'E', 'F', 'H', 'I'] },
+      { name: '1L', allowed: ['E', 'H', 'I', 'J', 'K'] },
+      { name: '1D', allowed: ['B', 'E', 'F', 'I', 'J'] },
+      { name: '1G', allowed: ['A', 'E', 'H', 'I', 'J'] },
+      { name: '1B', allowed: ['E', 'F', 'G', 'I', 'J'] },
+      { name: '1K', allowed: ['D', 'E', 'I', 'J', 'L'] }
+    ];
+
+    const allocated = allocateThirds(qualifiedThirds, slots);
+
+    return [
+      standingsByGroup['A'].runnerUp, standingsByGroup['B'].runnerUp,
+      standingsByGroup['E'].winner, allocated[0].name,
+      standingsByGroup['F'].winner, standingsByGroup['C'].runnerUp,
+      standingsByGroup['C'].winner, standingsByGroup['F'].runnerUp,
+      standingsByGroup['I'].winner, allocated[1].name,
+      standingsByGroup['E'].runnerUp, standingsByGroup['I'].runnerUp,
+      standingsByGroup['A'].winner, allocated[2].name,
+      standingsByGroup['L'].winner, allocated[3].name,
+      standingsByGroup['D'].winner, allocated[4].name,
+      standingsByGroup['G'].winner, allocated[5].name,
+      standingsByGroup['K'].runnerUp, standingsByGroup['L'].runnerUp,
+      standingsByGroup['H'].winner, standingsByGroup['J'].runnerUp,
+      standingsByGroup['B'].winner, allocated[6].name,
+      standingsByGroup['D'].runnerUp, standingsByGroup['G'].runnerUp,
+      standingsByGroup['J'].winner, standingsByGroup['H'].runnerUp,
+      standingsByGroup['K'].winner, allocated[7].name
+    ];
   }
 
   function renderKnockoutStage() {
@@ -508,8 +614,9 @@ document.addEventListener('DOMContentLoaded', () => {
            homeTeam = advancingTeams[i * 2] || 'TBD';
            awayTeam = advancingTeams[i * 2 + 1] || 'TBD';
         } else {
-           homeTeam = previousRoundWinners[i * 2] || 'TBD';
-           awayTeam = previousRoundWinners[i * 2 + 1] || 'TBD';
+           const mapping = knockoutBracketMapping[stage.id][i];
+           homeTeam = previousRoundWinners[mapping[0]] || 'TBD';
+           awayTeam = previousRoundWinners[mapping[1]] || 'TBD';
         }
 
         let homeWinner = false;
