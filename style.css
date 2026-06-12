@@ -417,19 +417,21 @@ body.light-theme::before {
 
 /* Flag Icons */
 .flag-icon {
-  width: 20px;
-  height: 14px;
-  object-fit: cover;
-  border-radius: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  font-size: 1.25rem;
+  line-height: 1;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .flag-placeholder {
-  font-size: 14px;
-  margin-right: 4px;
+  font-size: 1.25rem;
+  line-height: 1;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Clear Score Button */
