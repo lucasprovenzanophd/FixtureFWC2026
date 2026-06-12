@@ -589,8 +589,7 @@ body.light-theme::before {
 
 .sub-tab-btn {
   flex: 1;
-  font-size: 0.9rem;
-  padding: 0.6rem 1rem;
+  padding: 0.75rem 1rem;
   border-radius: 0.75rem;
 }
 
@@ -940,18 +939,16 @@ body.light-theme .bracket-match.locked {
 
 /* Today's match highlight */
 .match-details.highlight-today {
-  color: #f8fafc;
-  font-weight: 800;
-  background: var(--accent-color);
+  color: #fcbf45;
+  background: rgba(252, 191, 69, 0.1);
   border-radius: 6px;
   padding: 4px 10px;
   display: inline-block;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
 }
 
 body.light-theme .match-details.highlight-today {
-  color: #ffffff;
-  box-shadow: 0 2px 8px rgba(117, 170, 219, 0.4);
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.1);
 }
 
 /* Faded match details for played matches */
