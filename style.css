@@ -256,6 +256,7 @@ body.light-theme::before {
   font-weight: 600;
   transition: all 0.3s ease;
   white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .tab-btn:hover {
@@ -263,7 +264,9 @@ body.light-theme::before {
   background: rgba(255,255,255,0.05);
 }
 
-.tab-btn.active {
+.tab-btn.active,
+.tab-btn.active:hover,
+.tab-btn.active:focus {
   color: white;
   background: var(--accent-color);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
@@ -822,8 +825,11 @@ body.light-theme .tab-btn:hover {
   background: rgba(117, 170, 219, 0.1);
 }
 
-body.light-theme .tab-btn.active {
+body.light-theme .tab-btn.active,
+body.light-theme .tab-btn.active:hover,
+body.light-theme .tab-btn.active:focus {
   color: #ffffff;
+  background: var(--accent-color);
   box-shadow: 0 4px 12px rgba(117, 170, 219, 0.3);
 }
 
