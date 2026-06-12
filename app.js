@@ -203,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(confirm(t('resetConfirm'))) {
       state = { matches: {}, knockout: {} };
       saveState();
+      invalidateGroupCache();
       renderAll();
     }
   });
@@ -577,9 +578,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${getTeamFlagHTML(homeTeam)}
               </span>
               <div class="score-inputs">
-                <input type="number" min="0" max="10" class="score-input group-input" data-key="${matchKey}" data-side="home" value="${score.home}">
+                <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="10" class="score-input group-input" data-key="${matchKey}" data-side="home" value="${score.home}">
                 <span>-</span>
-                <input type="number" min="0" max="10" class="score-input group-input" data-key="${matchKey}" data-side="away" value="${score.away}">
+                <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="10" class="score-input group-input" data-key="${matchKey}" data-side="away" value="${score.away}">
               </div>
               <span class="team team-right">
                 ${getTeamFlagHTML(awayTeam)}
@@ -608,6 +609,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Cache variables to prevent redundant O(N) calculations on every knockout keystroke
+  let cachedAllGroupsPlayed = null;
+  let cachedAdvancingTeams = null;
+  let cachedGroupProgress = null;
+
+  function invalidateGroupCache() {
+    cachedAllGroupsPlayed = null;
+    cachedAdvancingTeams = null;
+    cachedGroupProgress = null;
+  }
+
   // Group Stage Event Listeners (using delegation to avoid rewriting listeners)
   groupsContainer.addEventListener('input', (e) => {
     if (e.target.classList.contains('score-input')) {
@@ -631,6 +643,9 @@ document.addEventListener('DOMContentLoaded', () => {
       // Update standings for this group only
       updateGroupStandings(groupLetter);
       
+      // Invalidate caches before rendering knockout stage
+      invalidateGroupCache();
+
       // Propagate changes to knockout stage
       saveActiveInput();
       renderKnockoutStage();
@@ -654,6 +669,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const groupLetter = key.split('_')[1];
       updateGroupStandings(groupLetter);
       
+      invalidateGroupCache();
       saveActiveInput();
       renderKnockoutStage();
       restoreActiveInput();
@@ -661,6 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function getGroupStageProgress() {
+    if (cachedGroupProgress) return cachedGroupProgress;
     let playedCount = 0;
     let totalCount = 0;
     
@@ -675,15 +692,20 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
     
-    return { playedCount, totalCount };
+    cachedGroupProgress = { playedCount, totalCount };
+    return cachedGroupProgress;
   }
 
   function areAllGroupMatchesPlayed() {
+    if (cachedAllGroupsPlayed !== null) return cachedAllGroupsPlayed;
     const { playedCount, totalCount } = getGroupStageProgress();
-    return playedCount === totalCount;
+    cachedAllGroupsPlayed = playedCount === totalCount;
+    return cachedAllGroupsPlayed;
   }
 
   function getAdvancingTeams() {
+    if (cachedAdvancingTeams) return cachedAdvancingTeams;
+
     if (!areAllGroupMatchesPlayed()) {
       return [
         '2A', '2B',
@@ -764,6 +786,7 @@ document.addEventListener('DOMContentLoaded', () => {
       standingsByGroup['J'].winner, standingsByGroup['H'].runnerUp,
       standingsByGroup['K'].winner, allocated[7].name
     ];
+    return cachedAdvancingTeams;
   }
 
   function isKnockoutStageComplete(stageId) {
@@ -934,14 +957,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${getTeamFlagHTML(homeTeam)}
                 <span class="team-name-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span class="full-name">${homeTeam}</span><span class="short-name">${getTeamShortName(homeTeam)}</span></span>
               </span>
-              <input type="number" min="0" max="10" class="score-input knockout-input" data-key="${matchKey}" data-side="home" value="${score.home}" ${isMatchDisabled ? 'disabled' : ''}>
+              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="10" class="score-input knockout-input" data-key="${matchKey}" data-side="home" value="${score.home}" ${isMatchDisabled ? 'disabled' : ''}>
             </div>
             <div class="bracket-team ${awayWinner ? 'winner' : ''}">
               <span class="team" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start; min-width: 0;">
                 ${getTeamFlagHTML(awayTeam)}
                 <span class="team-name-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span class="full-name">${awayTeam}</span><span class="short-name">${getTeamShortName(awayTeam)}</span></span>
               </span>
-              <input type="number" min="0" max="10" class="score-input knockout-input" data-key="${matchKey}" data-side="away" value="${score.away}" ${isMatchDisabled ? 'disabled' : ''}>
+              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="10" class="score-input knockout-input" data-key="${matchKey}" data-side="away" value="${score.away}" ${isMatchDisabled ? 'disabled' : ''}>
             </div>
             <button class="btn-clear btn-clear-ko" data-key="${matchKey}" title="${t('restartMatch')}" ${isMatchDisabled ? 'disabled style="display:none;"' : ''}>
               ${restartIconSVG}
