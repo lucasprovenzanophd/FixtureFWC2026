@@ -186,6 +186,7 @@ body.light-theme::before {
   font-weight: 800;
   background: linear-gradient(to right, #75aadb, #fcbf45);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   transition: font-size 0.3s ease;
 }
@@ -492,11 +493,13 @@ body.light-theme::before {
   padding: 0 0 2px 0;
   line-height: 42px;
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .score-input::-webkit-outer-spin-button,
 .score-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
+  appearance: none;
   margin: 0;
 }
 
