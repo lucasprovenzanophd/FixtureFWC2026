@@ -26,28 +26,28 @@
 }
 
 body.light-theme {
-  --bg-color: #f8fafc;
+  --bg-color: #f1f5f9;
   --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(15, 23, 42, 0.08);
-  --glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.05);
-  --accent-color: #2563eb;
-  --accent-hover: #1d4ed8;
+  --text-secondary: #334155;
+  --glass-bg: #ffffff;
+  --glass-border: rgba(15, 23, 42, 0.16);
+  --glass-shadow: 0 10px 30px 0 rgba(15, 23, 42, 0.08);
+  --accent-color: #1d4ed8;
+  --accent-hover: #1e40af;
   
-  --blob-1: #93c5fd;
-  --blob-2: #c084fc;
+  --blob-1: #bfdbfe;
+  --blob-2: #e9d5ff;
   --blob-3: #fbcfe8;
 
-  --header-bg: rgba(0, 0, 0, 0.03);
-  --match-bg: rgba(0, 0, 0, 0.015);
-  --match-border: rgba(0, 0, 0, 0.05);
-  --match-hover-bg: rgba(0, 0, 0, 0.03);
-  --input-bg: rgba(0, 0, 0, 0.04);
-  --bracket-match-bg: rgba(255, 255, 255, 0.6);
-  --bracket-team-bg: rgba(0, 0, 0, 0.02);
-  --header-scrolled-bg: rgba(255, 255, 255, 0.9);
-  --header-scrolled-border: rgba(15, 23, 42, 0.08);
+  --header-bg: rgba(255, 255, 255, 0.8);
+  --match-bg: #f8fafc;
+  --match-border: rgba(15, 23, 42, 0.08);
+  --match-hover-bg: #f1f5f9;
+  --input-bg: #ffffff;
+  --bracket-match-bg: #ffffff;
+  --bracket-team-bg: #f8fafc;
+  --header-scrolled-bg: rgba(255, 255, 255, 0.95);
+  --header-scrolled-border: rgba(15, 23, 42, 0.12);
 }
 
 * {
@@ -315,7 +315,7 @@ body.light-theme::before {
 .standings-table th, .standings-table td {
   padding: 0.6rem 0.5rem;
   text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--match-border);
 }
 
 .standings-table th {
@@ -354,8 +354,8 @@ body.light-theme::before {
   position: relative;
   display: flex;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--match-bg);
+  border: 1px solid var(--match-border);
   padding: 1rem;
   border-radius: 0.75rem;
   font-size: 0.875rem;
@@ -378,8 +378,8 @@ body.light-theme::before {
 }
 
 .match-row:hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.1);
+  background: var(--match-hover-bg);
+  border-color: var(--glass-border);
 }
 
 .team {
@@ -737,6 +737,23 @@ body.light-theme .progress-bar-container {
 body.light-theme .score-input:disabled {
   background: rgba(0, 0, 0, 0.02);
   border-color: rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .score-input:focus {
+  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.2);
+}
+
+body.light-theme .standings-table tr.advances {
+  background: rgba(16, 185, 129, 0.08);
+}
+
+body.light-theme .standings-table tr.maybe-advances {
+  background: rgba(251, 191, 36, 0.06);
+}
+
+body.light-theme .tab-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
 }
 
 /* Short/Full Name toggling */
