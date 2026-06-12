@@ -658,10 +658,14 @@ body.light-theme .theme-toggle-btn:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-primary, #f0f7ff);
+  background: #050914; /* dark theme default */
   opacity: 1;
   transition: opacity 0.5s ease, visibility 0.5s ease;
   visibility: visible;
+}
+
+body.light-theme .loading-spinner-overlay {
+  background: #f0f7ff;
 }
 
 .loading-spinner-overlay.hidden {
