@@ -362,94 +362,26 @@ document.addEventListener('DOMContentLoaded', () => {
     return `<span class="flag-placeholder" style="font-size: 1.25rem; line-height: 1; flex-shrink: 0;" aria-hidden="true">🏳️</span>`;
   }
 
-  function formatMatchDetails(stageId, matchIndex, groupLetter = '') {
-    const stadiums = {
-      'Dallas': 'AT&T Stadium, Arlington (Dallas)',
-      'Atlanta': 'Mercedes-Benz Stadium, Atlanta',
-      'Miami': 'Hard Rock Stadium, Miami',
-      'NYNJ': 'MetLife Stadium, East Rutherford (New York/New Jersey)',
-      'Boston': 'Gillette Stadium, Foxborough (Boston)',
-      'LA': 'SoFi Stadium, Inglewood (Los Angeles)',
-      'KC': 'Arrowhead Stadium, Kansas City',
-      'Seattle': 'Lumen Field, Seattle',
-      'SF': "Levi's Stadium, Santa Clara (San Francisco)",
-      'Houston': 'NRG Stadium, Houston',
-      'Philadelphia': 'Lincoln Financial Field, Philadelphia',
-      'Toronto': 'BMO Field, Toronto',
-      'Vancouver': 'BC Place, Vancouver',
-      'Azteca': 'Estadio Azteca, Mexico City',
-      'Guadalajara': 'Estadio Akron, Guadalajara',
-      'Monterrey': 'Estadio BBVA, Monterrey'
-    };
-
+  function formatMatchDetails(matchKey) {
     let dateStr = '';
     let venue = '';
 
-    if (stageId === 'group') {
-      // Group stage matches: June 11 to June 28, 2026
-      const groupOffset = groupLetter ? groupLetter.charCodeAt(0) - 65 : 0;
-      const globalIndex = groupOffset * 6 + matchIndex;
+    if (typeof matchMetadata !== 'undefined' && matchMetadata[matchKey]) {
+      const meta = matchMetadata[matchKey];
+      // Build a fake ISO string to parse locally, assuming times are local to stadium
+      // Not perfect but ensures consistent relative formatting
+      const [year, month, day] = meta.date.split('-');
+      const [hour, minute] = meta.time.split(':');
       
-      const dayOffset = Math.floor(globalIndex / 4.3); // Spreads 72 matches over 17 days
-      const matchDate = new Date('2026-06-11T16:00:00Z');
-      matchDate.setDate(matchDate.getDate() + dayOffset);
-      
-      // Kickoff hours: 13:00, 16:00, 18:00, 20:00 local time
-      const hours = [13, 16, 18, 20];
-      matchDate.setHours(hours[globalIndex % 4]);
-      
-      dateStr = matchDate.toLocaleString(currentLang, {
-        weekday: 'short', month: 'short', day: 'numeric',
-        hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
-      });
-
-      const venueKeys = Object.keys(stadiums);
-      venue = stadiums[venueKeys[globalIndex % venueKeys.length]];
-    } else {
-      // Knockout stages
-      const matchDate = new Date('2026-06-28T16:00:00Z'); // R32 starts June 28
-      const venueKeys = Object.keys(stadiums);
-
-      if (stageId === 'r32') {
-        const dayOffset = Math.floor(matchIndex / 3);
-        matchDate.setDate(matchDate.getDate() + dayOffset);
-        matchDate.setHours(15 + (matchIndex % 3) * 3);
-        venue = stadiums[venueKeys[matchIndex % venueKeys.length]];
-      } else if (stageId === 'r16') {
-        // July 4 - July 7
-        matchDate.setDate(matchDate.getDate() + 6 + Math.floor(matchIndex / 2));
-        matchDate.setHours(16 + (matchIndex % 2) * 4);
-        venue = stadiums[venueKeys[(matchIndex + 5) % venueKeys.length]];
-      } else if (stageId === 'qf') {
-        // July 9 - July 11
-        // QF Venues: Boston, Los Angeles, Miami, Kansas City
-        const qfVenues = ['Boston', 'LA', 'Miami', 'KC'];
-        matchDate.setDate(matchDate.getDate() + 11 + Math.floor(matchIndex / 1.5));
-        matchDate.setHours(16 + (matchIndex % 2) * 4);
-        venue = stadiums[qfVenues[matchIndex % 4]];
-      } else if (stageId === 'sf') {
-        // July 14 & July 15
-        matchDate.setDate(matchDate.getDate() + 16 + matchIndex);
-        matchDate.setHours(19);
-        venue = matchIndex === 0 ? stadiums['Dallas'] : stadiums['Atlanta'];
-      } else if (stageId === 'final') {
-        if (matchIndex === 0) {
-          // Third-place match: July 18, Miami
-          matchDate.setDate(matchDate.getDate() + 20);
-          matchDate.setHours(16);
-          venue = stadiums['Miami'];
-        } else {
-          // Final: July 19, NYNJ (MetLife Stadium)
-          matchDate.setDate(matchDate.getDate() + 21);
-          matchDate.setHours(16);
-          venue = stadiums['NYNJ'];
-        }
-      }
+      const matchDate = new Date();
+      matchDate.setFullYear(year, month - 1, day);
+      matchDate.setHours(hour, minute, 0, 0);
 
       dateStr = matchDate.toLocaleString(currentLang, {
         weekday: 'short', month: 'short', day: 'numeric',
-        hour: 'numeric', minute: '2-digit', timeZoneName: 'short'
+        hour: 'numeric', minute: '2-digit'
       });
+      venue = meta.stadium;
     }
 
     return `<div class="match-details">${dateStr} &bull; ${venue}</div>`;
@@ -571,7 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         matchesHTML += `
           <div class="match-row">
-            ${formatMatchDetails('group', index, groupLetter)}
+            ${formatMatchDetails(matchKey)}
             <div class="match-content">
               <span class="team team-left">
                 <span class="team-name-text"><span class="full-name">${homeTeam}</span><span class="short-name">${getTeamShortName(homeTeam)}</span></span>
@@ -951,7 +883,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
           matchDiv.innerHTML = `
             ${matchLabel}
-            ${formatMatchDetails('knockout', stageIdx * 10 + i)}
+            ${formatMatchDetails(matchKey)}
             <div class="bracket-team ${homeWinner ? 'winner' : ''}">
               <span class="team" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start; min-width: 0;">
                 ${getTeamFlagHTML(homeTeam)}
