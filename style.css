@@ -65,6 +65,29 @@ body {
   position: relative;
 }
 
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  opacity: 0.05;
+  z-index: -2;
+  pointer-events: none;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+body.light-theme::before {
+  filter: invert(100%);
+  opacity: 0.04;
+}
+
 /* Background Blobs for Glassmorphism effect */
 .background-blobs {
   position: fixed;
