@@ -368,16 +368,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (typeof matchMetadata !== 'undefined' && matchMetadata[matchKey]) {
       const meta = matchMetadata[matchKey];
-      // Build a fake ISO string to parse locally, assuming times are local to stadium
-      // Not perfect but ensures consistent relative formatting
-      const [year, month, day] = meta.date.split('-');
-      const [hour, minute] = meta.time.split(':');
-      
-      const matchDate = new Date();
-      matchDate.setFullYear(year, month - 1, day);
-      matchDate.setHours(hour, minute, 0, 0);
+      const matchDate = new Date(meta.utcDate);
 
       dateStr = matchDate.toLocaleString(currentLang, {
+        timeZone: 'America/Argentina/Buenos_Aires',
         weekday: 'short', month: 'short', day: 'numeric',
         hour: 'numeric', minute: '2-digit'
       });

@@ -85,525 +85,422 @@ const worldCupData = {
 };
 
 const matchMetadata = 
-  {
-    "group_A_m0": {
-      "date": "2026-06-11",
-      "time": "13:00",
-      "stadium": "Mexico City"
-    },
-    "group_A_m1": {
-      "date": "2026-06-11",
-      "time": "20:00",
-      "stadium": "Guadalajara (Zapopan)"
-    },
-    "group_A_m2": {
-      "date": "2026-06-18",
-      "time": "12:00",
-      "stadium": "Atlanta"
-    },
-    "group_A_m3": {
-      "date": "2026-06-18",
-      "time": "19:00",
-      "stadium": "Guadalajara (Zapopan)"
-    },
-    "group_A_m4": {
-      "date": "2026-06-24",
-      "time": "19:00",
-      "stadium": "Mexico City"
-    },
-    "group_A_m5": {
-      "date": "2026-06-24",
-      "time": "19:00",
-      "stadium": "Monterrey (Guadalupe)"
-    },
-    "group_B_m0": {
-      "date": "2026-06-12",
-      "time": "15:00",
-      "stadium": "Toronto"
-    },
-    "group_B_m1": {
-      "date": "2026-06-13",
-      "time": "12:00",
-      "stadium": "San Francisco Bay Area (Santa Clara)"
-    },
-    "group_B_m2": {
-      "date": "2026-06-18",
-      "time": "12:00",
-      "stadium": "Los Angeles (Inglewood)"
-    },
-    "group_B_m3": {
-      "date": "2026-06-18",
-      "time": "15:00",
-      "stadium": "Vancouver"
-    },
-    "group_B_m4": {
-      "date": "2026-06-24",
-      "time": "12:00",
-      "stadium": "Vancouver"
-    },
-    "group_B_m5": {
-      "date": "2026-06-24",
-      "time": "12:00",
-      "stadium": "Seattle"
-    },
-    "group_C_m0": {
-      "date": "2026-06-13",
-      "time": "18:00",
-      "stadium": "New York/New Jersey (East Rutherford)"
-    },
-    "group_C_m1": {
-      "date": "2026-06-13",
-      "time": "21:00",
-      "stadium": "Boston (Foxborough)"
-    },
-    "group_C_m2": {
-      "date": "2026-06-19",
-      "time": "18:00",
-      "stadium": "Boston (Foxborough)"
-    },
-    "group_C_m3": {
-      "date": "2026-06-19",
-      "time": "20:30",
-      "stadium": "Philadelphia"
-    },
-    "group_C_m4": {
-      "date": "2026-06-24",
-      "time": "18:00",
-      "stadium": "Miami (Miami Gardens)"
-    },
-    "group_C_m5": {
-      "date": "2026-06-24",
-      "time": "18:00",
-      "stadium": "Atlanta"
-    },
-    "group_D_m0": {
-      "date": "2026-06-12",
-      "time": "18:00",
-      "stadium": "Los Angeles (Inglewood)"
-    },
-    "group_D_m1": {
-      "date": "2026-06-13",
-      "time": "21:00",
-      "stadium": "Vancouver"
-    },
-    "group_D_m2": {
-      "date": "2026-06-19",
-      "time": "12:00",
-      "stadium": "Seattle"
-    },
-    "group_D_m3": {
-      "date": "2026-06-19",
-      "time": "20:00",
-      "stadium": "San Francisco Bay Area (Santa Clara)"
-    },
-    "group_D_m4": {
-      "date": "2026-06-25",
-      "time": "19:00",
-      "stadium": "Los Angeles (Inglewood)"
-    },
-    "group_D_m5": {
-      "date": "2026-06-25",
-      "time": "19:00",
-      "stadium": "San Francisco Bay Area (Santa Clara)"
-    },
-    "group_E_m0": {
-      "date": "2026-06-14",
-      "time": "12:00",
-      "stadium": "Houston"
-    },
-    "group_E_m1": {
-      "date": "2026-06-14",
-      "time": "19:00",
-      "stadium": "Philadelphia"
-    },
-    "group_E_m2": {
-      "date": "2026-06-20",
-      "time": "16:00",
-      "stadium": "Toronto"
-    },
-    "group_E_m3": {
-      "date": "2026-06-20",
-      "time": "19:00",
-      "stadium": "Kansas City"
-    },
-    "group_E_m4": {
-      "date": "2026-06-25",
-      "time": "16:00",
-      "stadium": "Philadelphia"
-    },
-    "group_E_m5": {
-      "date": "2026-06-25",
-      "time": "16:00",
-      "stadium": "New York/New Jersey (East Rutherford)"
-    },
-    "group_F_m0": {
-      "date": "2026-06-14",
-      "time": "15:00",
-      "stadium": "Dallas (Arlington)"
-    },
-    "group_F_m1": {
-      "date": "2026-06-14",
-      "time": "20:00",
-      "stadium": "Monterrey (Guadalupe)"
-    },
-    "group_F_m2": {
-      "date": "2026-06-20",
-      "time": "12:00",
-      "stadium": "Houston"
-    },
-    "group_F_m3": {
-      "date": "2026-06-20",
-      "time": "22:00",
-      "stadium": "Monterrey (Guadalupe)"
-    },
-    "group_F_m4": {
-      "date": "2026-06-25",
-      "time": "18:00",
-      "stadium": "Dallas (Arlington)"
-    },
-    "group_F_m5": {
-      "date": "2026-06-25",
-      "time": "18:00",
-      "stadium": "Kansas City"
-    },
-    "group_G_m0": {
-      "date": "2026-06-15",
-      "time": "12:00",
-      "stadium": "Seattle"
-    },
-    "group_G_m1": {
-      "date": "2026-06-15",
-      "time": "18:00",
-      "stadium": "Los Angeles (Inglewood)"
-    },
-    "group_G_m2": {
-      "date": "2026-06-21",
-      "time": "12:00",
-      "stadium": "Los Angeles (Inglewood)"
-    },
-    "group_G_m3": {
-      "date": "2026-06-21",
-      "time": "18:00",
-      "stadium": "Vancouver"
-    },
-    "group_G_m4": {
-      "date": "2026-06-26",
-      "time": "20:00",
-      "stadium": "Seattle"
-    },
-    "group_G_m5": {
-      "date": "2026-06-26",
-      "time": "20:00",
-      "stadium": "Vancouver"
-    },
-    "group_H_m0": {
-      "date": "2026-06-15",
-      "time": "12:00",
-      "stadium": "Atlanta"
-    },
-    "group_H_m1": {
-      "date": "2026-06-15",
-      "time": "18:00",
-      "stadium": "Miami (Miami Gardens)"
-    },
-    "group_H_m2": {
-      "date": "2026-06-21",
-      "time": "12:00",
-      "stadium": "Atlanta"
-    },
-    "group_H_m3": {
-      "date": "2026-06-21",
-      "time": "18:00",
-      "stadium": "Miami (Miami Gardens)"
-    },
-    "group_H_m4": {
-      "date": "2026-06-26",
-      "time": "18:00",
-      "stadium": "Guadalajara (Zapopan)"
-    },
-    "group_H_m5": {
-      "date": "2026-06-26",
-      "time": "19:00",
-      "stadium": "Houston"
-    },
-    "group_I_m0": {
-      "date": "2026-06-16",
-      "time": "15:00",
-      "stadium": "New York/New Jersey (East Rutherford)"
-    },
-    "group_I_m1": {
-      "date": "2026-06-16",
-      "time": "18:00",
-      "stadium": "Boston (Foxborough)"
-    },
-    "group_I_m2": {
-      "date": "2026-06-22",
-      "time": "17:00",
-      "stadium": "Philadelphia"
-    },
-    "group_I_m3": {
-      "date": "2026-06-22",
-      "time": "20:00",
-      "stadium": "New York/New Jersey (East Rutherford)"
-    },
-    "group_I_m4": {
-      "date": "2026-06-26",
-      "time": "15:00",
-      "stadium": "Boston (Foxborough)"
-    },
-    "group_I_m5": {
-      "date": "2026-06-26",
-      "time": "15:00",
-      "stadium": "Toronto"
-    },
-    "group_J_m0": {
-      "date": "2026-06-16",
-      "time": "20:00",
-      "stadium": "Kansas City"
-    },
-    "group_J_m1": {
-      "date": "2026-06-16",
-      "time": "21:00",
-      "stadium": "San Francisco Bay Area (Santa Clara)"
-    },
-    "group_J_m2": {
-      "date": "2026-06-22",
-      "time": "12:00",
-      "stadium": "Dallas (Arlington)"
-    },
-    "group_J_m3": {
-      "date": "2026-06-22",
-      "time": "20:00",
-      "stadium": "San Francisco Bay Area (Santa Clara)"
-    },
-    "group_J_m4": {
-      "date": "2026-06-27",
-      "time": "21:00",
-      "stadium": "Kansas City"
-    },
-    "group_J_m5": {
-      "date": "2026-06-27",
-      "time": "21:00",
-      "stadium": "Dallas (Arlington)"
-    },
-    "group_K_m0": {
-      "date": "2026-06-17",
-      "time": "12:00",
-      "stadium": "Houston"
-    },
-    "group_K_m1": {
-      "date": "2026-06-17",
-      "time": "20:00",
-      "stadium": "Mexico City"
-    },
-    "group_K_m2": {
-      "date": "2026-06-23",
-      "time": "12:00",
-      "stadium": "Houston"
-    },
-    "group_K_m3": {
-      "date": "2026-06-23",
-      "time": "20:00",
-      "stadium": "Guadalajara (Zapopan)"
-    },
-    "group_K_m4": {
-      "date": "2026-06-27",
-      "time": "19:30",
-      "stadium": "Miami (Miami Gardens)"
-    },
-    "group_K_m5": {
-      "date": "2026-06-27",
-      "time": "19:30",
-      "stadium": "Atlanta"
-    },
-    "group_L_m0": {
-      "date": "2026-06-17",
-      "time": "15:00",
-      "stadium": "Dallas (Arlington)"
-    },
-    "group_L_m1": {
-      "date": "2026-06-17",
-      "time": "19:00",
-      "stadium": "Toronto"
-    },
-    "group_L_m2": {
-      "date": "2026-06-23",
-      "time": "16:00",
-      "stadium": "Boston (Foxborough)"
-    },
-    "group_L_m3": {
-      "date": "2026-06-23",
-      "time": "19:00",
-      "stadium": "Toronto"
-    },
-    "group_L_m4": {
-      "date": "2026-06-27",
-      "time": "17:00",
-      "stadium": "New York/New Jersey (East Rutherford)"
-    },
-    "group_L_m5": {
-      "date": "2026-06-27",
-      "time": "17:00",
-      "stadium": "Philadelphia"
-    },
-    "r32_m0": {
-      "date": "2026-06-28",
-      "time": "12:00",
-      "stadium": "Los Angeles (Inglewood)"
-    },
-    "r32_m1": {
-      "date": "2026-06-29",
-      "time": "12:00",
-      "stadium": "Houston"
-    },
-    "r32_m2": {
-      "date": "2026-06-29",
-      "time": "16:30",
-      "stadium": "Boston (Foxborough)"
-    },
-    "r32_m3": {
-      "date": "2026-06-29",
-      "time": "19:00",
-      "stadium": "Monterrey (Guadalupe)"
-    },
-    "r32_m4": {
-      "date": "2026-06-30",
-      "time": "12:00",
-      "stadium": "Dallas (Arlington)"
-    },
-    "r32_m5": {
-      "date": "2026-06-30",
-      "time": "17:00",
-      "stadium": "New York/New Jersey (East Rutherford)"
-    },
-    "r32_m6": {
-      "date": "2026-06-30",
-      "time": "19:00",
-      "stadium": "Mexico City"
-    },
-    "r32_m7": {
-      "date": "2026-07-01",
-      "time": "12:00",
-      "stadium": "Atlanta"
-    },
-    "r32_m8": {
-      "date": "2026-07-01",
-      "time": "13:00",
-      "stadium": "Seattle"
-    },
-    "r32_m9": {
-      "date": "2026-07-01",
-      "time": "17:00",
-      "stadium": "San Francisco Bay Area (Santa Clara)"
-    },
-    "r32_m10": {
-      "date": "2026-07-02",
-      "time": "12:00",
-      "stadium": "Los Angeles (Inglewood)"
-    },
-    "r32_m11": {
-      "date": "2026-07-02",
-      "time": "19:00",
-      "stadium": "Toronto"
-    },
-    "r32_m12": {
-      "date": "2026-07-02",
-      "time": "20:00",
-      "stadium": "Vancouver"
-    },
-    "r32_m13": {
-      "date": "2026-07-03",
-      "time": "13:00",
-      "stadium": "Dallas (Arlington)"
-    },
-    "r32_m14": {
-      "date": "2026-07-03",
-      "time": "18:00",
-      "stadium": "Miami (Miami Gardens)"
-    },
-    "r32_m15": {
-      "date": "2026-07-03",
-      "time": "20:30",
-      "stadium": "Kansas City"
-    },
-    "r16_m0": {
-      "date": "2026-07-04",
-      "time": "12:00",
-      "stadium": "Houston"
-    },
-    "r16_m1": {
-      "date": "2026-07-04",
-      "time": "17:00",
-      "stadium": "Philadelphia"
-    },
-    "r16_m2": {
-      "date": "2026-07-05",
-      "time": "16:00",
-      "stadium": "New York/New Jersey (East Rutherford)"
-    },
-    "r16_m3": {
-      "date": "2026-07-05",
-      "time": "18:00",
-      "stadium": "Mexico City"
-    },
-    "r16_m4": {
-      "date": "2026-07-06",
-      "time": "14:00",
-      "stadium": "Dallas (Arlington)"
-    },
-    "r16_m5": {
-      "date": "2026-07-06",
-      "time": "17:00",
-      "stadium": "Seattle"
-    },
-    "r16_m6": {
-      "date": "2026-07-07",
-      "time": "12:00",
-      "stadium": "Atlanta"
-    },
-    "r16_m7": {
-      "date": "2026-07-07",
-      "time": "13:00",
-      "stadium": "Vancouver"
-    },
-    "qf_m0": {
-      "date": "2026-07-09",
-      "time": "16:00",
-      "stadium": "Boston (Foxborough)"
-    },
-    "qf_m1": {
-      "date": "2026-07-10",
-      "time": "12:00",
-      "stadium": "Los Angeles (Inglewood)"
-    },
-    "qf_m2": {
-      "date": "2026-07-11",
-      "time": "17:00",
-      "stadium": "Miami (Miami Gardens)"
-    },
-    "qf_m3": {
-      "date": "2026-07-11",
-      "time": "20:00",
-      "stadium": "Kansas City"
-    },
-    "sf_m0": {
-      "date": "2026-07-14",
-      "time": "14:00",
-      "stadium": "Dallas (Arlington)"
-    },
-    "sf_m1": {
-      "date": "2026-07-15",
-      "time": "15:00",
-      "stadium": "Atlanta"
-    },
-    "final_m0": {
-      "date": "2026-07-18",
-      "time": "17:00",
-      "stadium": "Miami (Miami Gardens)"
-    },
-    "final_m1": {
-      "date": "2026-07-19",
-      "time": "15:00",
-      "stadium": "New York/New Jersey (East Rutherford)"
-    }
-  };
+{
+  "group_A_m0": {
+    "utcDate": "2026-06-11T19:00:00Z",
+    "stadium": "Mexico City"
+  },
+  "group_A_m1": {
+    "utcDate": "2026-06-12T02:00:00Z",
+    "stadium": "Guadalajara (Zapopan)"
+  },
+  "group_A_m2": {
+    "utcDate": "2026-06-18T16:00:00Z",
+    "stadium": "Atlanta"
+  },
+  "group_A_m3": {
+    "utcDate": "2026-06-19T01:00:00Z",
+    "stadium": "Guadalajara (Zapopan)"
+  },
+  "group_A_m4": {
+    "utcDate": "2026-06-25T01:00:00Z",
+    "stadium": "Mexico City"
+  },
+  "group_A_m5": {
+    "utcDate": "2026-06-25T01:00:00Z",
+    "stadium": "Monterrey (Guadalupe)"
+  },
+  "group_B_m0": {
+    "utcDate": "2026-06-12T19:00:00Z",
+    "stadium": "Toronto"
+  },
+  "group_B_m1": {
+    "utcDate": "2026-06-13T19:00:00Z",
+    "stadium": "San Francisco Bay Area (Santa Clara)"
+  },
+  "group_B_m2": {
+    "utcDate": "2026-06-18T19:00:00Z",
+    "stadium": "Los Angeles (Inglewood)"
+  },
+  "group_B_m3": {
+    "utcDate": "2026-06-18T22:00:00Z",
+    "stadium": "Vancouver"
+  },
+  "group_B_m4": {
+    "utcDate": "2026-06-24T19:00:00Z",
+    "stadium": "Vancouver"
+  },
+  "group_B_m5": {
+    "utcDate": "2026-06-24T19:00:00Z",
+    "stadium": "Seattle"
+  },
+  "group_C_m0": {
+    "utcDate": "2026-06-13T22:00:00Z",
+    "stadium": "New York/New Jersey (East Rutherford)"
+  },
+  "group_C_m1": {
+    "utcDate": "2026-06-14T01:00:00Z",
+    "stadium": "Boston (Foxborough)"
+  },
+  "group_C_m2": {
+    "utcDate": "2026-06-19T22:00:00Z",
+    "stadium": "Boston (Foxborough)"
+  },
+  "group_C_m3": {
+    "utcDate": "2026-06-20T00:30:00Z",
+    "stadium": "Philadelphia"
+  },
+  "group_C_m4": {
+    "utcDate": "2026-06-24T22:00:00Z",
+    "stadium": "Miami (Miami Gardens)"
+  },
+  "group_C_m5": {
+    "utcDate": "2026-06-24T22:00:00Z",
+    "stadium": "Atlanta"
+  },
+  "group_D_m0": {
+    "utcDate": "2026-06-13T01:00:00Z",
+    "stadium": "Los Angeles (Inglewood)"
+  },
+  "group_D_m1": {
+    "utcDate": "2026-06-14T04:00:00Z",
+    "stadium": "Vancouver"
+  },
+  "group_D_m2": {
+    "utcDate": "2026-06-19T19:00:00Z",
+    "stadium": "Seattle"
+  },
+  "group_D_m3": {
+    "utcDate": "2026-06-20T03:00:00Z",
+    "stadium": "San Francisco Bay Area (Santa Clara)"
+  },
+  "group_D_m4": {
+    "utcDate": "2026-06-26T02:00:00Z",
+    "stadium": "Los Angeles (Inglewood)"
+  },
+  "group_D_m5": {
+    "utcDate": "2026-06-26T02:00:00Z",
+    "stadium": "San Francisco Bay Area (Santa Clara)"
+  },
+  "group_E_m0": {
+    "utcDate": "2026-06-14T17:00:00Z",
+    "stadium": "Houston"
+  },
+  "group_E_m1": {
+    "utcDate": "2026-06-14T23:00:00Z",
+    "stadium": "Philadelphia"
+  },
+  "group_E_m2": {
+    "utcDate": "2026-06-20T20:00:00Z",
+    "stadium": "Toronto"
+  },
+  "group_E_m3": {
+    "utcDate": "2026-06-21T00:00:00Z",
+    "stadium": "Kansas City"
+  },
+  "group_E_m4": {
+    "utcDate": "2026-06-25T20:00:00Z",
+    "stadium": "Philadelphia"
+  },
+  "group_E_m5": {
+    "utcDate": "2026-06-25T20:00:00Z",
+    "stadium": "New York/New Jersey (East Rutherford)"
+  },
+  "group_F_m0": {
+    "utcDate": "2026-06-14T20:00:00Z",
+    "stadium": "Dallas (Arlington)"
+  },
+  "group_F_m1": {
+    "utcDate": "2026-06-15T02:00:00Z",
+    "stadium": "Monterrey (Guadalupe)"
+  },
+  "group_F_m2": {
+    "utcDate": "2026-06-20T17:00:00Z",
+    "stadium": "Houston"
+  },
+  "group_F_m3": {
+    "utcDate": "2026-06-21T04:00:00Z",
+    "stadium": "Monterrey (Guadalupe)"
+  },
+  "group_F_m4": {
+    "utcDate": "2026-06-25T23:00:00Z",
+    "stadium": "Dallas (Arlington)"
+  },
+  "group_F_m5": {
+    "utcDate": "2026-06-25T23:00:00Z",
+    "stadium": "Kansas City"
+  },
+  "group_G_m0": {
+    "utcDate": "2026-06-15T19:00:00Z",
+    "stadium": "Seattle"
+  },
+  "group_G_m1": {
+    "utcDate": "2026-06-16T01:00:00Z",
+    "stadium": "Los Angeles (Inglewood)"
+  },
+  "group_G_m2": {
+    "utcDate": "2026-06-21T19:00:00Z",
+    "stadium": "Los Angeles (Inglewood)"
+  },
+  "group_G_m3": {
+    "utcDate": "2026-06-22T01:00:00Z",
+    "stadium": "Vancouver"
+  },
+  "group_G_m4": {
+    "utcDate": "2026-06-27T03:00:00Z",
+    "stadium": "Seattle"
+  },
+  "group_G_m5": {
+    "utcDate": "2026-06-27T03:00:00Z",
+    "stadium": "Vancouver"
+  },
+  "group_H_m0": {
+    "utcDate": "2026-06-15T16:00:00Z",
+    "stadium": "Atlanta"
+  },
+  "group_H_m1": {
+    "utcDate": "2026-06-15T22:00:00Z",
+    "stadium": "Miami (Miami Gardens)"
+  },
+  "group_H_m2": {
+    "utcDate": "2026-06-21T16:00:00Z",
+    "stadium": "Atlanta"
+  },
+  "group_H_m3": {
+    "utcDate": "2026-06-21T22:00:00Z",
+    "stadium": "Miami (Miami Gardens)"
+  },
+  "group_H_m4": {
+    "utcDate": "2026-06-27T00:00:00Z",
+    "stadium": "Houston"
+  },
+  "group_H_m5": {
+    "utcDate": "2026-06-27T00:00:00Z",
+    "stadium": "Guadalajara (Zapopan)"
+  },
+  "group_I_m0": {
+    "utcDate": "2026-06-16T19:00:00Z",
+    "stadium": "New York/New Jersey (East Rutherford)"
+  },
+  "group_I_m1": {
+    "utcDate": "2026-06-16T22:00:00Z",
+    "stadium": "Boston (Foxborough)"
+  },
+  "group_I_m2": {
+    "utcDate": "2026-06-22T21:00:00Z",
+    "stadium": "Philadelphia"
+  },
+  "group_I_m3": {
+    "utcDate": "2026-06-23T00:00:00Z",
+    "stadium": "New York/New Jersey (East Rutherford)"
+  },
+  "group_I_m4": {
+    "utcDate": "2026-06-26T19:00:00Z",
+    "stadium": "Boston (Foxborough)"
+  },
+  "group_I_m5": {
+    "utcDate": "2026-06-26T19:00:00Z",
+    "stadium": "Toronto"
+  },
+  "group_J_m0": {
+    "utcDate": "2026-06-17T01:00:00Z",
+    "stadium": "Kansas City"
+  },
+  "group_J_m1": {
+    "utcDate": "2026-06-17T04:00:00Z",
+    "stadium": "San Francisco Bay Area (Santa Clara)"
+  },
+  "group_J_m2": {
+    "utcDate": "2026-06-22T17:00:00Z",
+    "stadium": "Dallas (Arlington)"
+  },
+  "group_J_m3": {
+    "utcDate": "2026-06-23T03:00:00Z",
+    "stadium": "San Francisco Bay Area (Santa Clara)"
+  },
+  "group_J_m4": {
+    "utcDate": "2026-06-28T02:00:00Z",
+    "stadium": "Kansas City"
+  },
+  "group_J_m5": {
+    "utcDate": "2026-06-28T02:00:00Z",
+    "stadium": "Dallas (Arlington)"
+  },
+  "group_K_m0": {
+    "utcDate": "2026-06-17T17:00:00Z",
+    "stadium": "Houston"
+  },
+  "group_K_m1": {
+    "utcDate": "2026-06-18T02:00:00Z",
+    "stadium": "Mexico City"
+  },
+  "group_K_m2": {
+    "utcDate": "2026-06-23T17:00:00Z",
+    "stadium": "Houston"
+  },
+  "group_K_m3": {
+    "utcDate": "2026-06-24T02:00:00Z",
+    "stadium": "Guadalajara (Zapopan)"
+  },
+  "group_K_m4": {
+    "utcDate": "2026-06-27T23:30:00Z",
+    "stadium": "Miami (Miami Gardens)"
+  },
+  "group_K_m5": {
+    "utcDate": "2026-06-27T23:30:00Z",
+    "stadium": "Atlanta"
+  },
+  "group_L_m0": {
+    "utcDate": "2026-06-17T20:00:00Z",
+    "stadium": "Dallas (Arlington)"
+  },
+  "group_L_m1": {
+    "utcDate": "2026-06-17T23:00:00Z",
+    "stadium": "Toronto"
+  },
+  "group_L_m2": {
+    "utcDate": "2026-06-23T20:00:00Z",
+    "stadium": "Boston (Foxborough)"
+  },
+  "group_L_m3": {
+    "utcDate": "2026-06-23T23:00:00Z",
+    "stadium": "Toronto"
+  },
+  "group_L_m4": {
+    "utcDate": "2026-06-27T21:00:00Z",
+    "stadium": "New York/New Jersey (East Rutherford)"
+  },
+  "group_L_m5": {
+    "utcDate": "2026-06-27T21:00:00Z",
+    "stadium": "Philadelphia"
+  },
+  "r32_m0": {
+    "utcDate": "2026-06-28T19:00:00Z",
+    "stadium": "Los Angeles (Inglewood)"
+  },
+  "r32_m1": {
+    "utcDate": "2026-06-29T17:00:00Z",
+    "stadium": "Houston"
+  },
+  "r32_m2": {
+    "utcDate": "2026-06-29T20:30:00Z",
+    "stadium": "Boston (Foxborough)"
+  },
+  "r32_m3": {
+    "utcDate": "2026-06-30T01:00:00Z",
+    "stadium": "Monterrey (Guadalupe)"
+  },
+  "r32_m4": {
+    "utcDate": "2026-06-30T17:00:00Z",
+    "stadium": "Dallas (Arlington)"
+  },
+  "r32_m5": {
+    "utcDate": "2026-06-30T21:00:00Z",
+    "stadium": "New York/New Jersey (East Rutherford)"
+  },
+  "r32_m6": {
+    "utcDate": "2026-07-01T01:00:00Z",
+    "stadium": "Mexico City"
+  },
+  "r32_m7": {
+    "utcDate": "2026-07-01T16:00:00Z",
+    "stadium": "Atlanta"
+  },
+  "r32_m8": {
+    "utcDate": "2026-07-01T20:00:00Z",
+    "stadium": "Seattle"
+  },
+  "r32_m9": {
+    "utcDate": "2026-07-02T00:00:00Z",
+    "stadium": "San Francisco Bay Area (Santa Clara)"
+  },
+  "r32_m10": {
+    "utcDate": "2026-07-02T19:00:00Z",
+    "stadium": "Los Angeles (Inglewood)"
+  },
+  "r32_m11": {
+    "utcDate": "2026-07-02T23:00:00Z",
+    "stadium": "Toronto"
+  },
+  "r32_m12": {
+    "utcDate": "2026-07-03T03:00:00Z",
+    "stadium": "Vancouver"
+  },
+  "r32_m13": {
+    "utcDate": "2026-07-03T18:00:00Z",
+    "stadium": "Dallas (Arlington)"
+  },
+  "r32_m14": {
+    "utcDate": "2026-07-03T22:00:00Z",
+    "stadium": "Miami (Miami Gardens)"
+  },
+  "r32_m15": {
+    "utcDate": "2026-07-04T01:30:00Z",
+    "stadium": "Kansas City"
+  },
+  "r16_m0": {
+    "utcDate": "2026-07-04T17:00:00Z",
+    "stadium": "Houston"
+  },
+  "r16_m1": {
+    "utcDate": "2026-07-04T21:00:00Z",
+    "stadium": "Philadelphia"
+  },
+  "r16_m2": {
+    "utcDate": "2026-07-05T20:00:00Z",
+    "stadium": "New York/New Jersey (East Rutherford)"
+  },
+  "r16_m3": {
+    "utcDate": "2026-07-06T00:00:00Z",
+    "stadium": "Mexico City"
+  },
+  "r16_m4": {
+    "utcDate": "2026-07-06T19:00:00Z",
+    "stadium": "Dallas (Arlington)"
+  },
+  "r16_m5": {
+    "utcDate": "2026-07-07T00:00:00Z",
+    "stadium": "Seattle"
+  },
+  "r16_m6": {
+    "utcDate": "2026-07-07T16:00:00Z",
+    "stadium": "Atlanta"
+  },
+  "r16_m7": {
+    "utcDate": "2026-07-07T20:00:00Z",
+    "stadium": "Vancouver"
+  },
+  "qf_m0": {
+    "utcDate": "2026-07-09T20:00:00Z",
+    "stadium": "Boston (Foxborough)"
+  },
+  "qf_m1": {
+    "utcDate": "2026-07-10T19:00:00Z",
+    "stadium": "Los Angeles (Inglewood)"
+  },
+  "qf_m2": {
+    "utcDate": "2026-07-11T21:00:00Z",
+    "stadium": "Miami (Miami Gardens)"
+  },
+  "qf_m3": {
+    "utcDate": "2026-07-12T01:00:00Z",
+    "stadium": "Kansas City"
+  },
+  "sf_m0": {
+    "utcDate": "2026-07-14T19:00:00Z",
+    "stadium": "Dallas (Arlington)"
+  },
+  "sf_m1": {
+    "utcDate": "2026-07-15T19:00:00Z",
+    "stadium": "Atlanta"
+  },
+  "final_m0": {
+    "utcDate": "2026-07-18T21:00:00Z",
+    "stadium": "Miami (Miami Gardens)"
+  },
+  "final_m1": {
+    "utcDate": "2026-07-19T19:00:00Z",
+    "stadium": "New York/New Jersey (East Rutherford)"
+  }
+};
+
