@@ -160,10 +160,9 @@ document.addEventListener('DOMContentLoaded', () => {
   applyLanguage(currentLang);
 
   // State management
-  let state = JSON.parse(localStorage.getItem('wc2026_state')) || {
-    matches: {}, // key: "group_A_m0", value: { home: '', away: '' }
-    knockout: {} // key: "r32_m0", value: { home: '', away: '' }
-  };
+  let state = JSON.parse(localStorage.getItem('wc2026_state')) || {};
+  if (!state.matches) state.matches = {};
+  if (!state.knockout) state.knockout = {};
 
   // Dev testing helper: appending ?mock=true fills all group stage matches automatically
   if (new URLSearchParams(window.location.search).get('mock') === 'true') {
@@ -864,6 +863,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderKnockoutStage() {
+    let stateModified = false;
     // Render progress banner
     const progressContainer = document.getElementById('knockout-progress-container');
     if (progressContainer) {
@@ -909,9 +909,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const tabName = t(stage.id);
       tabBtn.innerText = available ? tabName : `🔒 ${tabName}`;
       
-      tabBtn.dataset.stage = stage.id;
       tabBtn.addEventListener('click', (e) => {
-        activeKnockoutStage = e.target.dataset.stage;
+        if (!isStageAvailable(stage.id)) return;
+        activeKnockoutStage = stage.id;
         renderKnockoutStage();
       });
       knockoutTabs.appendChild(tabBtn);
@@ -959,6 +959,32 @@ document.addEventListener('DOMContentLoaded', () => {
            const mapping = knockoutBracketMapping[stage.id][i];
            homeTeam = previousRoundWinners[mapping[0]] || 'TBD';
            awayTeam = previousRoundWinners[mapping[1]] || 'TBD';
+        }
+
+        // Invalidation logic: if teams changed, clear the entered score
+        let scoreCleared = false;
+        if (score.home !== '' || score.away !== '') {
+          if (score.homeTeam !== undefined && score.awayTeam !== undefined) {
+            if (score.homeTeam !== homeTeam || score.awayTeam !== awayTeam) {
+              score.home = '';
+              score.away = '';
+              if (state.knockout[matchKey]) {
+                state.knockout[matchKey].home = '';
+                state.knockout[matchKey].away = '';
+                state.knockout[matchKey].homeTeam = '';
+                state.knockout[matchKey].awayTeam = '';
+              }
+              scoreCleared = true;
+            }
+          } else {
+            if (state.knockout[matchKey]) {
+              state.knockout[matchKey].homeTeam = homeTeam;
+              state.knockout[matchKey].awayTeam = awayTeam;
+            }
+          }
+        }
+        if (scoreCleared) {
+          stateModified = true;
         }
 
         let homeWinner = false;
@@ -1009,14 +1035,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${getTeamFlagHTML(homeTeam)}
                 <span class="team-name-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span class="full-name">${homeTeam}</span><span class="short-name">${getTeamShortName(homeTeam)}</span></span>
               </span>
-              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="10" class="score-input knockout-input" data-key="${matchKey}" data-side="home" value="${score.home}" ${isMatchDisabled ? 'disabled' : ''}>
+              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="10" class="score-input knockout-input" data-key="${matchKey}" data-side="home" value="${score.home}" data-home="${homeTeam}" data-away="${awayTeam}" ${isMatchDisabled ? 'disabled' : ''}>
             </div>
             <div class="bracket-team ${awayWinner ? 'winner' : ''}">
               <span class="team" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start; min-width: 0;">
                 ${getTeamFlagHTML(awayTeam)}
                 <span class="team-name-text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><span class="full-name">${awayTeam}</span><span class="short-name">${getTeamShortName(awayTeam)}</span></span>
               </span>
-              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="10" class="score-input knockout-input" data-key="${matchKey}" data-side="away" value="${score.away}" ${isMatchDisabled ? 'disabled' : ''}>
+              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="10" class="score-input knockout-input" data-key="${matchKey}" data-side="away" value="${score.away}" data-home="${homeTeam}" data-away="${awayTeam}" ${isMatchDisabled ? 'disabled' : ''}>
             </div>
             <button class="btn-clear btn-clear-ko" data-key="${matchKey}" title="${t('restartMatch')}" ${isMatchDisabled ? 'disabled style="display:none;"' : ''}>
               ${restartIconSVG}
@@ -1032,6 +1058,7 @@ document.addEventListener('DOMContentLoaded', () => {
         bracketContainer.appendChild(roundDiv);
       }
     });
+    if (stateModified) saveState();
   }
 
   // Knockout stage delegation event listeners
@@ -1051,6 +1078,8 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (!state.knockout[key]) state.knockout[key] = { home: '', away: '' };
       state.knockout[key][side] = val;
+      state.knockout[key].homeTeam = e.target.dataset.home || '';
+      state.knockout[key].awayTeam = e.target.dataset.away || '';
       saveState();
       
       saveActiveInput();
@@ -1063,7 +1092,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearBtn = e.target.closest('.btn-clear');
     if (clearBtn) {
       const key = clearBtn.dataset.key;
-      state.knockout[key] = { home: '', away: '' };
+      state.knockout[key] = { home: '', away: '', homeTeam: '', awayTeam: '' };
       saveState();
       
       saveActiveInput();
