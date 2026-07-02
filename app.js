@@ -771,9 +771,9 @@ document.addEventListener('DOMContentLoaded', () => {
         '2K', '2L',
         '1H', '2J',
         '1B', `${t('thirdPlaceShort')} E/F/G/I/J`,
-        '2D', '2G',
         '1J', '2H',
-        '1K', `${t('thirdPlaceShort')} D/E/I/J/L`
+        '1K', `${t('thirdPlaceShort')} D/E/I/J/L`,
+        '2D', '2G'
       ];
     }
 
@@ -832,9 +832,9 @@ document.addEventListener('DOMContentLoaded', () => {
       standingsByGroup['K'].runnerUp, standingsByGroup['L'].runnerUp,
       standingsByGroup['H'].winner, standingsByGroup['J'].runnerUp,
       standingsByGroup['B'].winner, allocated[6].name,
-      standingsByGroup['D'].runnerUp, standingsByGroup['G'].runnerUp,
       standingsByGroup['J'].winner, standingsByGroup['H'].runnerUp,
-      standingsByGroup['K'].winner, allocated[7].name
+      standingsByGroup['K'].winner, allocated[7].name,
+      standingsByGroup['D'].runnerUp, standingsByGroup['G'].runnerUp
     ];
     return cachedAdvancingTeams;
   }
